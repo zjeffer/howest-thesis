@@ -1,0 +1,170 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                   %
+%              Template by Tuur Vanhoutte           %
+% https://github.com/zjeffer/howest-thesis-template %
+%                                                   % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% Package importing %%%%%
+\usepackage[english]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage[parfill]{parskip}
+\usepackage{eso-pic}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+
+
+%%%%% Change fonts here %%%%%
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\graphicspath{{img/}}
+
+%%%%% \theorem environment %%%%%
+\usepackage{amssymb}
+\newtheorem{theorem}{Definition}[section]
+\newenvironment{thmenum}
+ {\begin{enumerate}[label=\upshape\bfseries(\roman*)]}
+ {\end{enumerate}}
+
+
+%%%%% Styled code block %%%%%
+\usepackage{minted}
+\setminted{frame=single,framesep=3pt,linenos}
+\usepackage{upquote}
+\usepackage{color}
+
+%%%%% TOC styling %%%%%
+\makeatletter
+\renewcommand\tableofcontents{%
+  \null\hfill\textbf{\Huge\contentsname}\hfill\null\par
+  \vline\noexpand\rule{\textwidth}{1pt}%
+  \@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}%
+  \@starttoc{toc}%
+}
+\makeatother
+
+
+
+\begin{document}
+
+%%%%% title page %%%%%
+\definecolor{titlepagecolor}{RGB}{68,200,245}
+\begin{titlepage}
+    \pagecolor{titlepagecolor}
+    \newgeometry{left=3cm,right=1cm,bottom=1cm}
+    \noindent
+\begin{flushright}
+\vspace*{5cm}
+ \vspace{2cm}
+\end{flushright}
+    \color{white}
+    \par
+    \noindent
+    \color{white}
+    \makebox[0pt][l]{\rule{1.3\textwidth}{1pt}}
+    \par\medskip
+    {\noindent \Huge\textbf{\textsf{Thesis title}}}
+    \par\medskip
+    {\noindent\Large\textsf{Author}}
+    \par  
+\vfill%
+\end{titlepage}
+\restoregeometry
+\nopagecolor
+
+%%%%% Set pagenumbering from here %%%%%
+\pagenumbering{arabic}
+
+%%%%% Foreword %%%%%
+\section*{Foreword}
+\addcontentsline{toc}{section}{Foreword}
+\newpage
+
+%%%%% Abstract %%%%%
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+\newpage
+
+%%%%% Table of contents %%%%%
+\addcontentsline{toc}{section}{Contents}
+\tableofcontents
+\newpage
+
+%%%%% List of figures %%%%%
+\newpage
+\section*{List of figures}
+\addcontentsline{toc}{section}{List of figures}
+
+
+%%%%% List of abbreviations %%%%%
+\newpage
+\section*{List of abbreviations}
+\addcontentsline{toc}{section}{List of abbreviations}
+
+%%%%% Glossary %%%%%
+\newpage
+\section*{Glossary}
+\addcontentsline{toc}{section}{Glossary}
+
+%%%%% Introduction %%%%%
+\newpage
+\setcounter{section}{0}
+\section{Introduction}
+
+%%%%% Add Howest background %%%%%
+\AddToShipoutPicture{
+    \ifnum\value{page}>0
+    \AtPageLowerLeft{
+    \raisebox{3\baselineskip}{\makebox[0.25\paperwidth]{
+        \begin{minipage}{21cm}\centering
+            \includegraphics{img/background.png}
+        \end{minipage}}}
+    }
+  \fi
+}
+
+%%%%% Research %%%%%
+\newpage
+\section{Research}
+
+%%%%% Technical research %%%%%
+\newpage
+\section{Technical research}
+
+%%%%% Reflection %%%%%
+\newpage
+\section{Reflection}
+
+%%%%% Advice %%%%%
+\newpage
+\section{Advice}
+
+%%%%% Conclusion %%%%%
+\newpage
+\section{Conclusion}
+
+%%%%% Bibliography %%%%%
+\newpage
+\section{Bibliography}
+
+%%%%% Appendix %%%%%
+\newpage
+\section{Appendix}
+
+
+
+
+
+\end{document}

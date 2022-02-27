@@ -1,0 +1,14 @@
+# exclude temp latex files
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.pdfsync
+_minted*
+__latexindent_temp.tex
