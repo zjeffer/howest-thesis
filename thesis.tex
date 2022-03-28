@@ -9,7 +9,7 @@
 
 %%%%% Package importing %%%%%
 \usepackage[english]{babel}
-\usepackage[margin=3cm]{geometry}
+\usepackage[margin=2.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
@@ -22,6 +22,13 @@
 \usepackage{titletoc}
 \usepackage{tcolorbox}
 \usepackage{enumitem}
+\usepackage{changepage}
+
+\usepackage{bookmark}
+\usepackage{csquotes}
+\usepackage[style=ieee]{biblatex}
+\addbibresource{sources.bib}
+
 
 
 %%%%% Change fonts here %%%%%
@@ -60,41 +67,131 @@
 \begin{document}
 
 %%%%% title page %%%%%
-\definecolor{titlepagecolor}{RGB}{68,200,245}
 \begin{titlepage}
-    \pagecolor{titlepagecolor}
-    \newgeometry{left=3cm,right=1cm,bottom=1cm}
-    \noindent
-\begin{flushright}
-\vspace*{5cm}
- \vspace{2cm}
-\end{flushright}
-    \color{white}
-    \par
-    \noindent
-    \color{white}
-    \makebox[0pt][l]{\rule{1.3\textwidth}{1pt}}
-    \par\medskip
-    {\noindent \Huge\textbf{\textsf{Thesis title}}}
-    \par\medskip
-    {\noindent\Large\textsf{Author}}
-    \par  
-\vfill%
+    \newgeometry{margin=0cm}
+    \begin{center}
+        %%%%% Change the cover image here %%%%%
+        \includegraphics[width=18.5cm,height=18.5cm]{example-image}
+    \end{center}
+    \begin{adjustwidth}{1.5cm}{1.5cm}
+
+    \vspace{0.5em}
+
+    \MakeUppercase{\Huge\textbf{How to create a chess engine using Deep Reinforcement Learning}}
+
+    \MakeUppercase{\Large\textit{A critical look at DeepMind's AlphaZero}}
+
+    \vspace{1em}
+
+    \MakeUppercase{Interal promotor: Wouter Gevaert}
+
+    \MakeUppercase{External promotor: <name here>}
+
+    \vspace{1em}
+
+    \MakeUppercase{\small{Research conducted by}}
+
+    \MakeUppercase{\Large\textbf{{Tuur Vanhoutte}}}
+
+    \MakeUppercase{\small{for obtaining a bachelor's degree in}}
+
+    \MakeUppercase{\Large{\textbf{{Multimedia \& Creative Technologies}}}}
+
+    \MakeUppercase{Howest | 2021-2022}
+    \end{adjustwidth}
 \end{titlepage}
-\restoregeometry
-\nopagecolor
 
-%%%%% Set pagenumbering from here %%%%%
+\newgeometry{margin=2.5cm}
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
+\newpage
+
+%%%%% Set pagenumbering off %%%%%
 \pagenumbering{arabic}
+\thispagestyle{empty}
+%%%%% Preface %%%%%
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
 
-%%%%% Foreword %%%%%
-\section*{Foreword}
-\addcontentsline{toc}{section}{Foreword}
+This bachelor thesis is the conclusion to the bachelor programme Multimedia \& Creative Technologies at Howest college
+West Flanders in Kortrijk, Belgium. The programme teaches students a wide range of skills in the field of 
+computer science, with a focus on creativity and Internet of Things. From the second year on, students can choose 
+between four different modules:
+
+\begin{enumerate}
+    \item \textbf{AI Engineer}
+    \item \textbf{Smart XR Developer}
+    \item \textbf{Next Web Developer}
+    \item \textbf{IoT Infrastructure Engineer}
+\end{enumerate}
+
+This bachelor thesis was made under the \textbf{AI Engineer} module.
+The subject of the thesis is a critical look at the result of my research project 
+in the previous semester. The goal of the project was to create a chess engine in Python with
+deep reinforcement learning based on DeepMind's AlphaZero algorithm. 
+
+I will explain the research I needed to create it, the technical details on how to program the
+chess engine and I will reflect on the results of the project. To do this, I will contact 
+multiple people familiar with the field of reinforcement learning to get a better understanding of the
+impact of this research on society. Based on this, I will give advice to people and companies who 
+wish to implement similar algorithms.
+
+I would like to show gratitude to Wouter Gevaert for his enthousiastic support in the creation of my research project 
+and this thesis. I also want to thank the other teachers at Howest Kortrijk, who shared their knowledge
+and expertise in programming and AI in very interesting classes.
+
+% TODO: thank external promotor
+
+Furthermore, I would liike to thank my parents for giving me the chance to have a good education, and 
+the motivation to get the best I can out of my studies.
+
+\vspace{3em}
+
+\begin{center}
+    \textbf{Tuur Vanhoutte}, 1$^{\text{st}}$ June 2022 % TODO: verander datum naar datum finale versie
+\end{center}
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
 \newpage
 
 %%%%% Abstract %%%%%
 \section*{Abstract}
 \addcontentsline{toc}{section}{Abstract}
+
+
+% TODO: abstract verder aanvullen
+
+% Samenvatting of abstract (mag in het Engels): MAX 1 halve A4-pagina: 
+% Je beantwoordt in de samenvatting kort en bondig een viertal vragen: 
+% X Wat is de onderzoeksvraag?
+% X Wat was jouw onderzoek? 
+% - Welke elementen spelen een grote rol (zowel positief als negatief) bij de evaluatie van het onderzoek? 
+% - Welke elementen zijn belangrijk bij jouw advies?
+% - Het besluit wordt kort samengevat
+
+This bachelor thesis answers the question: ``How to create a chess engine using deep reinforcement learning?''.
+It explains the difference between normal chess engines and chess engines that use deep reinforcement learning, and
+specifically tries to recreate the results of AlphaZero, the chess engine by DeepMind, in Python on consumer hardware. 
+
+The technical research shows what is needed to create my implementation using Python and TensorFlow. 
+It shows how to program the chess engine, how to build the neural network, and how to train and evaluate the network.
+During the creation of this chess engine, it was crucial to create a huge amount of data through self-play.
+
+The thesis contains a reflection on the results of my research project, which proposes a solution to the problem of
+creating a high amount of games through self-play. It also reflects on the impact of this research on society, and the
+viability of this type of artificial intelligence in the future. With this comes a section on advice for companies that wish
+to implement similar algorithms.
+
+% It concludes... (TODO)
+
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
 \newpage
 
 %%%%% Table of contents %%%%%
@@ -103,13 +200,18 @@
 \newpage
 
 %%%%% List of figures %%%%%
-\newpage
 \section*{List of figures}
 \addcontentsline{toc}{section}{List of figures}
+\renewcommand{\listfigurename}{}
+\listoffigures
 
+% TODO: Remove if no tables
+% \section*{List of tables}
+% \addcontentsline{toc}{section}{List of tables}
+% \renewcommand{\listtablename}{}
+% \listoftables
 
 %%%%% List of abbreviations %%%%%
-\newpage
 \section*{List of abbreviations}
 \addcontentsline{toc}{section}{List of abbreviations}
 
@@ -122,6 +224,43 @@
 \newpage
 \setcounter{section}{0}
 \section{Introduction}
+
+% Doel: In de inleiding beschrijf je ook hoe jouw bachelorproef in elkaar steekt. Een krachtige heldere inleiding 
+% zorgt ervoor dat je de lezer voor je wint en hij/zij sneller de rest van jouw document zal gaan lezen. 
+% In de inleiding introduceer je de onderzoeksvraag. Je vermeldt de achtergrond of bestaande situatie. Je licht toe 
+% waarom de onderzoeksvraag voor jou/jouw stagebedrijf relevant is. Ook eventuele deelvragen worden 
+% nauwgezet omschreven. 
+% De inleiding omschrijft ook de gebruikte onderzoeksmethode. Je legt uit waar, wanneer, met wie en hoe je het 
+% onderzoek gaat doen. 
+% Je kunt alvast gebruikmaken van één of meerdere standaardzinnen: 
+% - De data voor dit onderzoek zijn verzameld door... 
+% - Vijf stukken worden onderzocht, die allemaal... 
+% - De onderzoeksgegevens in deze bachelorproef zijn afkomstig uit vier belangrijke bronnen, namelijk... 
+% - Door kwalitatieve methoden te gebruiken probeer ik... uiteen te zetten/uit te lichten. 
+% - De studie is uitgevoerd in de vorm van een enquête, waarbij data zijn verzameld via... 
+% - De methode die in deze studie gebruikt is, is een gemengde aanpak gebaseerd op...
+
+Chess is not only one of the most popular board games in the world, it is also a breeding ground for
+complex algorithms and more recently, machine learning. Chess is theoretically a deterministic game: 
+no information is hidden from either player and every position has a calculable set of possible moves.
+Because the branching factor of chess is about 35-38 moves \cite{BranchingFactorChessprogramming}, 
+calculating if a position is winning or losing requires an enormous amount of calculations.
+
+Throughout the entire history of computer science, researchers have continously tried to find better
+ways to calculate if a position is winning or losing. The most famous example is the StockFish 
+engine \cite{StockfishChess2022}, which uses the minimax algorithm with alpha-beta pruning to calculate the best move.
+
+More recently, researchers at Google DeepMind have developed a new algorithm called AlphaZero \cite{AlphaZero2022}.
+This thesis explores the concept of AlphaZero, how to create a chess engine based on it, and the impact of 
+the algorithm on both the world of chess and the rest of society.
+
+Research has been conducted by investigating what is needed to recreate the results of AlphaZero, 
+by programming a simple implementation using Python and TensorFlow. This was done as part of a research project
+between November 2021 and January 2022. The code was written with lots of trial and error, as DeepMind released 
+very little information about the detailed workings of the algorithm. 
+
+% TODO: more info
+
 
 %%%%% Add Howest background %%%%%
 \AddToShipoutPicture{
@@ -138,6 +277,12 @@
 %%%%% Research %%%%%
 \newpage
 \section{Research}
+
+\subsection{Traditional chess engines}
+
+\subsection{AlphaZero}
+
+
 
 %%%%% Technical research %%%%%
 \newpage
@@ -158,6 +303,8 @@
 %%%%% Bibliography %%%%%
 \newpage
 \section{Bibliography}
+\renewcommand{\bibname}{}
+\printbibliography[heading=none]
 
 %%%%% Appendix %%%%%
 \newpage

@@ -12,3 +12,7 @@
 *.pdfsync
 _minted*
 __latexindent_temp.tex
+*.bcf
+*.lof
+*.lot
+*.run.xml
