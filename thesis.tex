@@ -278,7 +278,102 @@ very little information about the detailed workings of the algorithm.
 \newpage
 \section{Research}
 
-\subsection{Traditional chess engines}
+%%%%%%%%%%%%% 
+% 
+% Answer the theoretical questions:
+%
+% [ ] Hoe kan ik het Monte Carlo Tree Search algoritme gebruiken om de beste zetten te selecteren?
+% [ ] Welke voordelen biedt deep reinforcement learning bij schaken?
+% [ ] Hoe ziet de architectuur van het neurale netwerk er uit?
+% [ ] Hoe werd deep reinforcement learning reeds gebruikt bij andere spellen?
+% [ ] Hoe werken huidige schaakcomputers die geen neurale netwerken gebruiken?
+% [ ] Hoe kan ik met normale hardware een deep reinforcement learning schaakcomputer trainen? Wat zijn de limitaties?
+% [ ] Kan ik mijn schaakcomputer beter maken dan een amateurspeler (1000 ELO)?
+%
+%%%%%%%%%%%%%
+
+\subsection{What is a chess engine?}
+
+According to Wikipedia \cite{ChessEngine2022}, a chess engine is a computer program that analyzes 
+chess or chess variant positions, and generates a move or list of moves that it regards as strongest.
+Given any chess position, the engine will estimate the winner of that position based on the strength 
+of the possible future moves up to a certain depth. The strength of a chess engine is determined by
+the amount of moves, both in depth and breadth, that the engine can calcuate. 
+
+
+\subsection{How do traditional chess engines work?}
+
+Contemporary chess engines, like Stockfish, use a variant of the minimax algorithm that employs alpha-beta pruning.
+
+\subsubsection{The minimax algorithm}
+
+The minimax algorithm \cite{Minimax2022} is a general algorithm usable in many applications, ranging from artificial intelligence to 
+decision theory and game theory. The algorithm tries to minimize the maximum amount of loss. In chess, this means 
+that the engine tries to minimize the possibility for the worst-case scenario: the opponent
+checkmating the player. For games where the player needs to maximize a score, the algorithm is called maximin: 
+maximizing the minimum gain. 
+
+Minimax creates a tree with chess positions as nodes and chess moves as edges between the nodes. 
+Each node gets a value that represents the strength of the position for the current player. 
+It starts with only the root of the tree as the current position. 
+The algorithm explores the tree in a depth-first manner. 
+This means that it will traverse the tree vertically until a certain depth is reached. When that happens, the algorithm evaluates that node's
+position and returns its value to its parent node. % TODO: more info
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/depth-vs-breadth.png}
+    \caption{Depth-First search vs Breadth-First search \cite{eppesHowComputerizedChess2019}}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Pseudocode}
+
+The algorithm is recursive: it calls itself with different arguments, depending
+on which player's turn it is. In chess, white wants to maximize the score, and 
+black wants to minimize it. \cite{Minimax2022}
+
+\begin{minted}{c}
+function  minimax(node, depth, maximizingPlayer) is
+    if depth = 0 or node is a terminal node then
+        return the heuristic value of node
+    if maximizingPlayer then
+        value := - inf
+        for each child of node do
+            value := max(value, minimax(child, depth - 1, FALSE))
+        return value
+    else (* minimizing player *)
+        value := + inf
+        for each child of node do
+            value := min(value, minimax(child, depth - 1, TRUE))
+        return value
+\end{minted}
+
+Calling the function:
+
+\begin{minted}{c}
+minimax(origin, depth, TRUE)
+\end{minted}
+
+
+
+\subsubsection{Alpha-beta pruning}
+
+Alpha-beta pruning is an algorithm \cite{AlphaBetaPruning2022} to reduce the amount of nodes that need to be evaluated by minimax.
+It does this by cutting away tree branches that lead to worse outcomes. 
+
+
+
 
 \subsection{AlphaZero}
 
