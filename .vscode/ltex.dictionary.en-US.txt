@@ -1,0 +1,14 @@
+minimax
+AlphaZero
+Gevaert
+Wouter
+Tuur
+Vanhoutte
+Howest
+StockFish
+Minimax
+grandmasters
+AlphaGo
+maximin
+backpropagation
+Backpropagation

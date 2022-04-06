@@ -1,0 +1,6 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qthmenum\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Qframe=single,framesep=3pt,linenos\\E$"}
+{"rule":"COMMA_PARENTHESIS_WHITESPACE","sentence":"^\\Qframe=single,framesep=3pt,linenos\\E$"}
+{"rule":"WHITESPACE_RULE","sentence":"^\\Qtoc\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Qtoc\\E$"}
+{"rule":"MASS_AGREEMENT","sentence":"^\\QThe evaluation function.\\E$"}
