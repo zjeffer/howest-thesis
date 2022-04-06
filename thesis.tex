@@ -30,7 +30,6 @@
 \addbibresource{sources.bib}
 
 
-
 %%%%% Change fonts here %%%%%
 \usepackage[T1]{fontenc}
 \usepackage{helvet}
@@ -62,8 +61,6 @@
 }
 \makeatother
 
-
-
 \begin{document}
 
 %%%%% title page %%%%%
@@ -83,7 +80,7 @@
 
     \vspace{1em}
 
-    \MakeUppercase{Interal promotor: Wouter Gevaert}
+    \MakeUppercase{Internal promotor: Wouter Gevaert}
 
     \MakeUppercase{External promotor: <name here>}
 
@@ -115,8 +112,8 @@
 \section*{Preface}
 \addcontentsline{toc}{section}{Preface}
 
-This bachelor thesis is the conclusion to the bachelor programme Multimedia \& Creative Technologies at Howest college
-West Flanders in Kortrijk, Belgium. The programme teaches students a wide range of skills in the field of 
+This bachelor thesis is the conclusion to the bachelor program Multimedia \& Creative Technologies at Howest college
+West Flanders in Kortrijk, Belgium. The program teaches students a wide range of skills in the field of 
 computer science, with a focus on creativity and Internet of Things. From the second year on, students can choose 
 between four different modules:
 
@@ -138,13 +135,13 @@ multiple people familiar with the field of reinforcement learning to get a bette
 impact of this research on society. Based on this, I will give advice to people and companies who 
 wish to implement similar algorithms.
 
-I would like to show gratitude to Wouter Gevaert for his enthousiastic support in the creation of my research project 
+I would like to show gratitude to Wouter Gevaert for his enthusiastic support in the creation of my research project 
 and this thesis. I also want to thank the other teachers at Howest Kortrijk, who shared their knowledge
 and expertise in programming and AI in very interesting classes.
 
 % TODO: thank external promotor
 
-Furthermore, I would liike to thank my parents for giving me the chance to have a good education, and 
+Furthermore, I would like to thank my parents for giving me the chance to have a good education, and 
 the motivation to get the best I can out of my studies.
 
 \vspace{3em}
@@ -204,6 +201,7 @@ to implement similar algorithms.
 \addcontentsline{toc}{section}{List of figures}
 \renewcommand{\listfigurename}{}
 \listoffigures
+\newpage
 
 % TODO: Remove if no tables
 % \section*{List of tables}
@@ -214,6 +212,8 @@ to implement similar algorithms.
 %%%%% List of abbreviations %%%%%
 \section*{List of abbreviations}
 \addcontentsline{toc}{section}{List of abbreviations}
+
+
 
 %%%%% Glossary %%%%%
 \newpage
@@ -246,7 +246,7 @@ no information is hidden from either player and every position has a calculable 
 Because the branching factor of chess is about 35-38 moves \cite{BranchingFactorChessprogramming}, 
 calculating if a position is winning or losing requires an enormous amount of calculations.
 
-Throughout the entire history of computer science, researchers have continously tried to find better
+Throughout the entire history of computer science, researchers have continuously tried to find better
 ways to calculate if a position is winning or losing. The most famous example is the StockFish 
 engine \cite{StockfishChess2022}, which uses the minimax algorithm with alpha-beta pruning to calculate the best move.
 
@@ -286,9 +286,7 @@ very little information about the detailed workings of the algorithm.
 % [ ] Welke voordelen biedt deep reinforcement learning bij schaken?
 % [ ] Hoe ziet de architectuur van het neurale netwerk er uit?
 % [ ] Hoe werd deep reinforcement learning reeds gebruikt bij andere spellen?
-% [ ] Hoe werken huidige schaakcomputers die geen neurale netwerken gebruiken?
-% [ ] Hoe kan ik met normale hardware een deep reinforcement learning schaakcomputer trainen? Wat zijn de limitaties?
-% [ ] Kan ik mijn schaakcomputer beter maken dan een amateurspeler (1000 ELO)?
+% [X] Hoe werken huidige schaakcomputers die geen neurale netwerken gebruiken?
 %
 %%%%%%%%%%%%%
 
@@ -298,12 +296,12 @@ According to Wikipedia \cite{ChessEngine2022}, a chess engine is a computer prog
 chess or chess variant positions, and generates a move or list of moves that it regards as strongest.
 Given any chess position, the engine will estimate the winner of that position based on the strength 
 of the possible future moves up to a certain depth. The strength of a chess engine is determined by
-the amount of moves, both in depth and breadth, that the engine can calcuate. 
+the amount of moves, both in depth and breadth, that the engine can calculate. 
 
 
 \subsection{How do traditional chess engines work?}
 
-Contemporary chess engines, like Stockfish, use a variant of the minimax algorithm that employs alpha-beta pruning.
+Contemporary chess engines, like StockFish \cite{StockfishChess2022}, use a variant of the minimax algorithm that employs alpha-beta pruning.
 
 \subsubsection{The minimax algorithm}
 
@@ -313,12 +311,12 @@ that the engine tries to minimize the possibility for the worst-case scenario: t
 checkmating the player. For games where the player needs to maximize a score, the algorithm is called maximin: 
 maximizing the minimum gain. 
 
-Minimax creates a tree with chess positions as nodes and chess moves as edges between the nodes. 
-Each node gets a value that represents the strength of the position for the current player. 
-It starts with only the root of the tree as the current position. 
-The algorithm explores the tree in a depth-first manner. 
-This means that it will traverse the tree vertically until a certain depth is reached. When that happens, the algorithm evaluates that node's
-position and returns its value to its parent node. % TODO: more info
+Minimax recursively creates a search tree \cite{eppesHowComputerizedChess2019}, with chess positions as nodes and chess moves as edges between the nodes. 
+Each node has a value that represents the strength of the position for the current player. 
+At the start of the algorithm, the tree only consists of a root node that represents the current position. 
+It then explores the tree in a depth-first manner by continuously choosing random legal moves, creating nodes and edges in the process.
+
+This means that it will traverse the tree vertically until a certain depth is reached:
 
 \begin{figure}[H]
     \centering
@@ -326,20 +324,24 @@ position and returns its value to its parent node. % TODO: more info
     \caption{Depth-First search vs Breadth-First search \cite{eppesHowComputerizedChess2019}}
 \end{figure}
 
+When that happens, that leaf node's position is evaluated and its value is returned
+upwards to the parent node. The parent node looks at all of its children's values, 
+and receives the maximum value when playing white, and the minimum value
+when playing black. 
 
+This repeats until the root node receives a value: the strength of the current position.
 
+\subsubsection{The evaluation function}
 
-
-
-
-
-
+The value estimation of leaf nodes is done by an evaluation function \cite{EvaluationFunction2022} written specifically
+for the game. This function can differ from engine to engine, and is usually written with 
+help from chess grandmasters. 
 
 
 
 \subsubsection{Pseudocode}
 
-The algorithm is recursive: it calls itself with different arguments, depending
+The algorithm is recursive; it calls itself with different arguments, depending
 on which player's turn it is. In chess, white wants to maximize the score, and 
 black wants to minimize it. \cite{Minimax2022}
 
@@ -362,20 +364,90 @@ function  minimax(node, depth, maximizingPlayer) is
 Calling the function:
 
 \begin{minted}{c}
+// origin = node to start
+// depth = depth limit
+// maximizingPlayer = TRUE if white, FALSE if black
 minimax(origin, depth, TRUE)
 \end{minted}
 
-
-
 \subsubsection{Alpha-beta pruning}
 
-Alpha-beta pruning is an algorithm \cite{AlphaBetaPruning2022} to reduce the amount of nodes that need to be evaluated by minimax.
-It does this by cutting away tree branches that lead to worse outcomes. 
+Because the necessary amount of nodes to get a good estimation of the strength of a position
+is so high, the algorithm needs to be optimized. 
+Alpha-beta pruning \cite{AlphaBetaPruning2022} aims to reduce the amount of nodes that need to be explored by minimax.
+It does this by cutting off branches in the search tree that lead to worse outcomes.
+
+Say you're playing the white pieces. You want to minimize your maximum loss, which means 
+you want to make sure that black's score is as low as possible. 
+Minimax always assumes that the opponent will play the best possible move. If one of white's possible moves
+leads to a position where black gets a big advantage, it will eliminate that branch of the search tree.
+As a result, the amount of nodes to explore is greatly reduced, while retaining a good estimation 
+of the strength of the position.
+
+Since 2020, StockFish has been using a sparse and shallow neural network as its evaluation function. 
+This neural network is still trained using supervised learning, not (deep) reinforcement learning.
+
+\subsection{Monte Carlo Tree Search}
+
+The biggest problem with minimax algorithms with a depth limit is that it is very dependent
+on the evaluation function you use: if the evaluation function makes an incorrect estimation, 
+the algorithm will suggest bad moves. Developers of contemporary chess engines like StockFish continuously
+try to improve this function. 
+
+Using alpha-beta pruning can also bring about some problems. Say the player can sacrifice a piece
+to get a huge advantage later in the game. The algorithm might cut off the branch and never explore that winning line, 
+because it considers the sacrifice a losing position \cite{MinimaxMonteCarlo}. 
+
+Monte Carlo Tree Search (MCTS) \cite{MonteCarloTree2022} is a search algorithm that can be used to mitigate these problems.
+MCTS approximates the value of a position by creating a search tree using random exploration of the most promising moves.
+
+\subsubsection{The algorithm}
+
+To create this search tree for a certain position, MCTS will run the following algorithm hundreds of times. 
+Each of these runs is called an MCTS \textbf{simulation}. One simulation consists of four steps:
+
+\begin{enumerate}
+    \item \textbf{Selection}:
+    \begin{itemize}
+        \item Starting from the root node, select a child node based on a formula of your choice.
+        \item Most implementations of MCTS use some variant of Upper Confidence Bound (UCB).
+        \item Keep selecting nodes until a node has been reached that has not been visited (=expanded) before. We call this a leaf node.
+        \item If the root node is a leaf node, we immediately proceed to the next step.
+    \end{itemize}
+    \item \textbf{Expansion}:
+    \begin{itemize}
+        \item If the selected leaf node is a terminal node (the game ends), proceed to the backpropagation step.
+        \item If it doesn't, create a child node for every possible action that can be taken from the selected node.
+    \end{itemize}
+    \item \textbf{Simulation}:
+    \begin{itemize}
+        \item Choose a random child node that was expanded in the previous step.
+        \item By only choosing random moves, simulate the rest of the game from that child node's position.
+    \end{itemize}
+    \item \textbf{Backpropagation}:
+    \begin{itemize}
+        \item Return the simulation's result up the tree.
+        \item Every node tracks the number of times it has been visited, and the number of times it has lead to a win.
+    \end{itemize}
+\end{enumerate}
 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.98\textwidth]{img/MCTS-steps.png}
+    \caption{The 4 steps of the MCTS algorithm \cite{MonteCarloTree2022}}
+\end{figure}
 
+For chess, this algorithm is very inefficient, because of its necessity to simulate 
+an entire game in the third step of every simulation. 
 
-\subsection{AlphaZero}
+\subsection{Go}
+
+Go is a Chinese two-player strategy board game that uses white and black stones as playing pieces \cite{GoGame2022}.
+It is played on a rectangular grid of (usually) 19 by 19 lines. The rules are relatively simple, but due to 
+its extremely complex possibilities, Go has been a very popular playground for AI research similarly to chess.
+
+\subsubsection{AlphaGo}
 
 
 
