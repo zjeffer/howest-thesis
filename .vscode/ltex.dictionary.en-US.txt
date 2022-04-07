@@ -12,3 +12,9 @@ AlphaGo
 maximin
 backpropagation
 Backpropagation
+Leela
+kingside
+queenside
+underpromotion
+ReLU
+ReLu

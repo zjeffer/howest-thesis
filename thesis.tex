@@ -384,15 +384,13 @@ leads to a position where black gets a big advantage, it will eliminate that bra
 As a result, the amount of nodes to explore is greatly reduced, while retaining a good estimation 
 of the strength of the position.
 
-Since 2020, StockFish has been using a sparse and shallow neural network as its evaluation function. 
-This neural network is still trained using supervised learning, not (deep) reinforcement learning.
-
 \subsection{Monte Carlo Tree Search}
 
-The biggest problem with minimax algorithms with a depth limit is that it is very dependent
-on the evaluation function you use: if the evaluation function makes an incorrect estimation, 
-the algorithm will suggest bad moves. Developers of contemporary chess engines like StockFish continuously
-try to improve this function. 
+The biggest problem with minimax algorithms that use a depth limit is the dependency on the evaluation function.
+If the evaluation function makes incorrect or suboptimal estimations, the algorithm will suggest bad moves. 
+Developers of contemporary chess engines like StockFish continuously try to improve this function. 
+Since 2020, StockFish has been using a sparse and shallow neural network as its evaluation function. 
+This neural network is still trained using supervised learning, not (deep) reinforcement learning.
 
 Using alpha-beta pruning can also bring about some problems. Say the player can sacrifice a piece
 to get a huge advantage later in the game. The algorithm might cut off the branch and never explore that winning line, 
@@ -410,7 +408,7 @@ Each of these runs is called an MCTS \textbf{simulation}. One simulation consist
     \item \textbf{Selection}:
     \begin{itemize}
         \item Starting from the root node, select a child node based on a formula of your choice.
-        \item Most implementations of MCTS use some variant of Upper Confidence Bound (UCB).
+        \item Most implementations of MCTS use some variant of Upper Confidence Bound (UCB) \cite{MLMonteCarlo2019}
         \item Keep selecting nodes until a node has been reached that has not been visited (=expanded) before. We call this a leaf node.
         \item If the root node is a leaf node, we immediately proceed to the next step.
     \end{itemize}
@@ -439,17 +437,160 @@ Each of these runs is called an MCTS \textbf{simulation}. One simulation consist
 \end{figure}
 
 For chess, this algorithm is very inefficient, because of its necessity to simulate 
-an entire game in the third step of every simulation. 
+an entire game of chess in the third step of every simulation. 
+Just to calculate the value of one position would need hundreds of these simulations to get a good estimation.
+This is why the selection formula needs to be chosen carefully; it's important to select nodes in a way that
+balances exploration and exploitation.
 
 \subsection{Go}
 
 Go is a Chinese two-player strategy board game that uses white and black stones as playing pieces \cite{GoGame2022}.
 It is played on a rectangular grid of (usually) 19 by 19 lines. The rules are relatively simple, but due to 
 its extremely complex possibilities, Go has been a very popular playground for AI research similarly to chess.
+Go's much larger branching factor compared to chess makes it very difficult to evaluate a position using 
+traditional methods like minimax with alpha-beta pruning.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/go.jpg}
+    \caption{Go board \cite{GoGame2022}}
+\end{figure}
 
 \subsubsection{AlphaGo}
 
+In 2014, DeepMind Technologies \cite{DeepMind2022}, a subsidiary of Google, 
+started developing a new algorithm called AlphaGo to play Go \cite{AlphaGo2022a}. 
+Previously, the strongest Go engines were still only good enough to win against amateur Go players \cite{AlphaGo}.
+The algorithm used a combination of the MCTS algorithm and a deep neural network to evaluate positions. 
 
+AlphaGo was built \cite{AlphaGo} \cite{MasteringGameGo}  by first training a neural network with supervised learning by using data from human games.
+The weights of that network were then copied to a new reinforcement learning network. That network was used to 
+create a training set through self-play. By playing against itself and recording the board state, the 
+moves the network considered, and the eventual winner of the game, a training set was created.
+That training set was then used to train the reinforcement learning network. A separate network (the value network) 
+was used to estimate the value of a position. 
+
+\subsubsection{AlphaGo Zero}
+
+Because AlphaGo still used some amateur games to learn from, the next step was creating a version of AlphaGo
+that learns completely from scratch. That's why DeepMind developed AlphaGo Zero.
+AlphaGo Zero uses a different kind of network than AlphaGo. Instead of using two separate networks, 
+it will combine the two outputs into a policy head and a value head. It's also using different layers:
+residual layers instead of convolutional layers \cite{MasteringGameZero}. 
+
+\subsection{AlphaZero}
+
+AlphaZero is a generalized version of AlphaGo Zero, created to master the games of chess, shogi (``Japanese chess''), and Go \cite{AlphaZero2022} \cite{silverMasteringChessShogi2017c}. 
+For chess, AlphaZero was evaluated against StockFish version 8 by playing 1000 games with 3 hours per player, plus 
+15 seconds per move. It won 155 times, lost 6 times and the remaining games were drawn. 
+AlphaZero uses a single neural network with two outputs, just like AlphaGo Zero. 
+
+
+\subsubsection{Neural network input}
+
+The input to the network represents the state of the game. 
+It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
+
+\begin{itemize}
+    \item $N$ is the board size
+    \begin{itemize}
+        \item $N = 8$ in chess.
+    \end{itemize}
+    \item $M$ is the number of different pieces on the board, 
+    \begin{itemize}
+        \item Two players with six types of pieces each
+        \item Every piece is represented by its own 8x8 board of boolean values
+        \item For every square: $1$ if the piece is on that square, $0$ if it isn't
+        \item $M = 12$ in chess
+    \end{itemize}
+    \item $T$ is the amount of previous moves that are used as input, including the current move. 
+    \begin{itemize}
+        \item AlphaZero used $T = 8$ for both chess, shogi, and Go.
+        \item This gives the network a certain history to learn from
+    \end{itemize}
+    \item $L$ represents a set of rules specific to the game
+    \begin{itemize}
+        \item $L = 7$ in chess
+        \item $1$ plane to indicate whose turn it is
+        \item $1$ for the total amount of moves played so far
+        \item $4$ for castling legality (white and black can both castle kingside or queenside under certain conditions)
+        \item $1$ to represent a repetition count (in chess, 3 repetitions results in a draw)
+    \end{itemize}
+    \item $\Rightarrow 8 \cdot 8 \cdot (12 \cdot 8 + 7)$. 
+\end{itemize}
+
+This means that the input to the neural network is 119 8x8 boards of boolean values.
+
+\subsubsection{Neural network layers}
+
+DeepMind tested multiple neural network architectures for AlphaGo Zero \cite{NeuralNetworksChessprogramming}. 
+The following parts were used in these networks:
+
+\begin{itemize}
+    \item Convolutional block
+    \begin{itemize}
+        \item A convolution layer
+        \item Batch normalization layer
+        \item ReLu activation function
+    \end{itemize}
+    \item Residual block
+    \begin{itemize}
+        \item This consists of two convolutional blocks, and a skip-connection
+        \item The skip-connection will combine the input of the block to the output of the first two convolutional blocks
+    \end{itemize}
+\end{itemize}
+
+These networks were tested by DeepMind during development of AlphaGo Zero \cite{MasteringGameZero}:
+
+\begin{enumerate}
+    \item \textbf{`dual-res':} a single tower of 20 residual blocks with combined policy and value heads. This is the architecture used in AlphaGo Zero.
+    \item \textbf{`sep-res':} two towers of 20 residual blocks each: one with the policy head and one with the value head.
+    \item \textbf{`dual-conv':} a single tower of 12 convolutional blocks with combined policy and value heads.
+    \item \textbf{`sep-conv':} two towers of 12 convolutional blocks each: one with the policy head and one with the value head. This is the network used in AlphaGo.
+\end{enumerate}
+
+AlphaZero uses the same network architecture as AlphaGo Zero: dual-res.
+
+\subsubsection{Neural network output}
+
+The neural network has two outputs:
+
+\begin{itemize}
+    \item A policy head, which represents a probability distribution over the possible actions.
+    \item A value head, which represents the value of the current position.
+\end{itemize}
+
+While the value head simply outputs a single float value between -1 and 1, the policy head is quite a bit more complicated.
+It outputs a vector of probabilities, one for each possible action in the chosen game. 
+For chess, 73 different types of actions are possible:
+
+\begin{itemize}
+    \item 56 possible types of ``queen-like'' moves: 8 directions to move the piece a distance between 1 and 7 squares.
+    \item 8 possible knight moves
+    \item 9 special ``underpromotion'' moves:
+    \begin{itemize}
+        \item If a pawn is promoted to a queen, it is counted as a queen-like move (see above)
+        \item If a pawn is promoted to a rook, bishop, or knight, it is seen as an underpromotion (3 pieces)
+        \item 3 ways to promote: pushing the pawn up to the final rank, or diagonally taking a piece and landing on the final rank
+        \item $\Rightarrow 3 \cdot 3 = 9$
+    \end{itemize}
+\end{itemize}
+
+These 73 actions are each represented by a plane of 8x8 float values. Say the first plane is a queen-like move
+to move a piece one square northwest, the second plane could the same type of move, but a distance of two squares, and so on.
+The squares on these planes represent the square from which to pick up a piece. 
+
+% TODO: example
+
+The result is a $73 \cdot 8 \cdot 8$ vector of probabilities, so $4672$ float values.  
+
+\subsection{Tensor Processing Units}
+
+To help with calculations, DeepMind used Google's newly created Tensor Processing Units (TPU) \cite{TensorProcessingUnit2022}.
+A TPU is an application-specific integrated circuit (ASIC \cite{ApplicationspecificIntegratedCircuit2022}) that is specifically built for machine learning with
+neural networks. 
+
+\subsection{Leela Chess Zero}
 
 %%%%% Technical research %%%%%
 \newpage

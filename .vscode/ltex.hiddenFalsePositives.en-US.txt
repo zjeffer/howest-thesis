@@ -4,3 +4,10 @@
 {"rule":"WHITESPACE_RULE","sentence":"^\\Qtoc\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Qtoc\\E$"}
 {"rule":"MASS_AGREEMENT","sentence":"^\\QThe evaluation function.\\E$"}
+{"rule":"CD_NN","sentence":"^\\Q8 possible knight moves 9 special underprom\\E$"}
+{"rule":"CD_NN","sentence":"^\\Q8 possible knight moves 9 special “underpromotion” moves: A pawn can be promoted to a queen, rook, bishop, or knight\\E$"}
+{"rule":"CD_NN","sentence":"^\\Q8 possible knight moves 9 special “underpromotion” moves: If a pawn is promoted to a queen, it is counted as a queen-like move (see above) If a pawn is promoted to a rook, bishop, or knight, it is seen as an underpromotion 3 ways to promote: pushing the pawn up to the final rank, or diagonally taking a piece and landing on the final rank \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"EN_A_VS_AN","sentence":"^\\QThese 73 actions are each represented by an 8x8 board\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`sep-res': two towers of 20 residual blocks each: one with the policy head and one with the value head.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`dual-conv': a single tower of 12 convolutional blocks with combined policy and value heads.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`sep-conv': two towers of 12 convolutional blocks each: one with the policy head and one with the value head.\\E$"}
