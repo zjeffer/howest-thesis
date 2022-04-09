@@ -18,3 +18,7 @@ queenside
 underpromotion
 ReLU
 ReLu
+TPUs
+customizability
+Graphviz
+npy

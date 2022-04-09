@@ -11,3 +11,4 @@
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`sep-res': two towers of 20 residual blocks each: one with the policy head and one with the value head.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`dual-conv': a single tower of 12 convolutional blocks with combined policy and value heads.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`sep-conv': two towers of 12 convolutional blocks each: one with the policy head and one with the value head.\\E$"}
+{"rule":"IF_IS","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if white \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if black\\E$"}

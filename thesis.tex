@@ -282,10 +282,10 @@ very little information about the detailed workings of the algorithm.
 % 
 % Answer the theoretical questions:
 %
-% [ ] Hoe kan ik het Monte Carlo Tree Search algoritme gebruiken om de beste zetten te selecteren?
-% [ ] Welke voordelen biedt deep reinforcement learning bij schaken?
-% [ ] Hoe ziet de architectuur van het neurale netwerk er uit?
-% [ ] Hoe werd deep reinforcement learning reeds gebruikt bij andere spellen?
+% [X] Hoe kan ik het Monte Carlo Tree Search algoritme gebruiken om de beste zetten te selecteren?
+% [X] Welke voordelen biedt deep reinforcement learning bij schaken?
+% [X] Hoe ziet de architectuur van het neurale netwerk er uit?
+% [X] Hoe werd deep reinforcement learning reeds gebruikt bij andere spellen?
 % [X] Hoe werken huidige schaakcomputers die geen neurale netwerken gebruiken?
 %
 %%%%%%%%%%%%%
@@ -473,7 +473,7 @@ was used to estimate the value of a position.
 \subsubsection{AlphaGo Zero}
 
 Because AlphaGo still used some amateur games to learn from, the next step was creating a version of AlphaGo
-that learns completely from scratch. That's why DeepMind developed AlphaGo Zero.
+that learns completely from scratch. That's why DeepMind developed AlphaGo Zero \cite{AlphaGoZero2022}.
 AlphaGo Zero uses a different kind of network than AlphaGo. Instead of using two separate networks, 
 it will combine the two outputs into a policy head and a value head. It's also using different layers:
 residual layers instead of convolutional layers \cite{MasteringGameZero}. 
@@ -584,17 +584,303 @@ The squares on these planes represent the square from which to pick up a piece.
 
 The result is a $73 \cdot 8 \cdot 8$ vector of probabilities, so $4672$ float values.  
 
-\subsection{Tensor Processing Units}
+\subsection{Training the network}
 
-To help with calculations, DeepMind used Google's newly created Tensor Processing Units (TPU) \cite{TensorProcessingUnit2022}.
+To train this type of network, it's necessary to create a dataset. 
+This is done by letting the engine play against itself for a high amount of matches. 
+Every move, data is collected and stored in a training set.
+For complex games like chess, shogi and Go, this training set needs to be huge
+because of the extremely large amount of possible situations.
+
+
+
+\subsubsection{Tensor Processing Units (TPU)}
+
+Because of the requirement to play a high amount of matches against itself, it was necessary to calculate
+MCTS simulations in parallel on as fast as possible hardware. 
+To help with these calculations, DeepMind used Google's newly created Tensor Processing Units (TPU) \cite{TensorProcessingUnit2022}.
 A TPU is an application-specific integrated circuit (ASIC \cite{ApplicationspecificIntegratedCircuit2022}) that is specifically built for machine learning with
-neural networks. 
+neural networks. Since 2018, these TPUs have been made publicly available to rent through Google's Cloud Platform. Smaller TPUs 
+can be purchased from Google. 
 
 \subsection{Leela Chess Zero}
+
+Leela Chess Zero (lc0) is a free, open-source project that attempts to replicate the results of AlphaZero \cite{LeelaChessZero2022}. 
+Lc0 was adapted from Leela Zero \cite{LeelaZero2021}, a Go computer that attempted to replicate the results AlphaGo Zero \cite{AlphaGoZero2022}. 
+
+It is written in C++ \cite{Lc02022}, and it has managed to play at a level that is comparable to the current best version of StockFish.
+Because lc0 is a community driven project, volunteers can help create training games through self-play using their own computers.
+This made it possible to feed millions of chess games into the network. 
 
 %%%%% Technical research %%%%%
 \newpage
 \section{Technical research}
+
+% Volgende zaken worden verwacht:
+% Beschrijving van de ontwikkelde software
+% Opbouw applicatie: structuur/opbouw van het resultaat
+% Achterliggende technologieën
+% Overwonnen moeilijkheden/problemen
+% …
+
+\subsection{Introduction}
+
+Creating the chess engine required programming the following parts:
+
+\begin{itemize}
+    \item The MCTS algorithm
+    \item A tree data structure with nodes and edges
+    \item The neural network
+    \item The training pipeline
+    \item The evaluation pipeline
+    \item A way to store every move to a dataset
+    \item A class to make the engine play against itself
+    \item A GUI to play against the network
+    \item Docker containers for easily scaling and distributing the program
+\end{itemize}
+
+All code was written in Python. The neural network was made using the TensorFlow Keras library.
+Chess rules and helper functions were implemented using the open-source library python-chess \cite{PythonchessChessLibrarya}.
+
+\subsection{Class structure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/class-structure.png}
+    \caption{Basic class structure for the code responsible for playing a game}
+\end{figure}
+
+\subsubsection{Making one move}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/ChessRL-schematic.png}
+    \caption{Pipeline to make one move}
+\end{figure}
+
+To make a move, an Agent (white or black) observes the environment: the chessboard.
+The agent calls upon the MCTS class to create a tree with as root the current state of the chessboard.
+The MCTS class will run the MCTS algorithm hundreds of times. This amount is configurable in the config file. 
+Higher amounts result in a more accurate estimation of the position's value, but also in longer 
+computation times.
+
+Every MCTS simulation, the neural network will be called to evaluate a position. The two outputs, 
+the policy and the value, will be used to update the tree. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{img/MCTS-choose-move.png}
+    \caption{Example tree after 400 simulations. N = amount of times the selection step selects that edge}
+\end{figure}
+
+After the simulations are done, the agent will pick the best move from the tree. 
+It can do this in two ways:
+
+\begin{itemize}
+    \item Deterministically: choosing the most visited move 
+    \item Stochastically: creating a uniform distribution of the visit counts and picking a move from that distribution
+\end{itemize}
+
+Stochastic selection is better when creating a training set, as it will result in a more diverse dataset.
+Deterministic selection is better when evaluating with a previous network, or playing against the network competitively. 
+In that case, picking the most visited move is the best choice.
+
+
+\subsection{The neural network}
+
+Initially, a prototype of the neural network was created with randomly initialized weights.
+The Python class to create the model was immediately made with customizability in mind: 
+the input and output shapes can be given as arguments, and the sizes of the convolution filters 
+can be changed using a configuration file.
+
+\subsection{A tree structure with nodes and edges}
+
+As mentioned before, the MCTS algorithm creates a tree structure to represent 
+the possible future states after the current position.
+
+Node and Edge classes were written. The Node class represents a position in the game, and
+holds the following data:
+
+\begin{itemize}
+    \item The position: a string representation of the board using the Forsyth-Edwards Notation (FEN) \cite{ForsythEdwardsNotation2022}
+    \item The current player to move (boolean)
+    \item A list of edges connected to this node
+    \item The visit count of this node, initialized to 0
+    \item The value for this node, initialized to 0
+\end{itemize}
+
+The Edge class represents a move. It holds the following data:
+
+\begin{itemize}
+    \item The input node (the position from which the move was made)
+    \item The output node (the resulting position after taking the move)
+    \item The move itself: an object of the Move class from the python-chess library, which holds:
+    \begin{itemize}
+        \item The source square and the target square of the move
+        \item If the move was a promotion: the piece it was promoted to
+    \end{itemize}
+    \item The prior probability of this move
+    \item The visit count of this edge, initialized to 0
+    \item The value for this action, initialized to 0
+\end{itemize}
+
+The tree can also be plotted using the Graphviz library \cite{Graphviz}. A recursive function was written to 
+create the tree and output it to an SVG file. 
+
+\subsection{The MCTS algorithm}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/mcts-alphazero.png}
+    \caption{The four steps in AlphaZero's MCTS algorithm \cite{bodensteinAlphaZero2019}}
+\end{figure}
+
+A class was written to hold an MCTS tree. It holds the agent who created the tree and the
+current position as the root node. 
+
+\subsubsection{The selection step}
+
+For the selection step, the following UCB formula was used to determine which edge to select:
+
+\begin{center}
+    \begin{equation}
+        UCB = \Big(\log({\frac{(1 + N_{\text{parent}} + C_{\text{base}})}{C_{\text{base}}}}) + C_{\text{init}}\Big) \cdot P \cdot \frac{\sqrt{N_\text{parent}}}{(1 + N)}
+    \end{equation}
+\end{center}
+
+\begin{itemize}
+    \item $C_{\text{base}}$ and $C_{\text{init}}$ are constants that can be changed in the config file. The same values as AlphaZero were used.
+    \item $N_{\text{parent}}$ is the visit count of the input node
+    \item $N$ is the visit count of the edge
+    \item $P$ is the prior probability of the edge
+\end{itemize}
+
+The selection step combines this UCB formula with the edges action-value and visit count:
+
+\begin{center}
+    \begin{equation}
+        Q = \frac{W}{N+1}
+    \end{equation}
+\end{center}
+
+\begin{center}
+    \begin{equation}
+        V = 
+        \begin{cases}
+            UCB + Q & \text{if white} \\
+            UCB - Q & \text{if black}
+        \end{cases}
+    \end{equation}
+\end{center}
+
+The edge with the highest value ($V$) is selected. After selection, the 
+visit count for the edge's output node is incremented by one. 
+We call this output node the `leaf node'. 
+
+\subsubsection{The expansion step}
+
+The leaf node is expanded by creating a new edge for each possible (legal) move.
+If there are no legal moves, the outcome (draw, win, loss) is checked and the leaf node
+is passed to the next step in the algorithm.
+
+If there are legal moves, the leaf node is given as an input to the neural network.
+The neural network will return the policy and the value of the position.
+
+As described in the research part of this thesis, the value is a float between -1 and 1, and the 
+policy is a 73x8x8 tensor. This policy is mapped to a dictionary, where keys are moves and 
+the values are the probabilities of each move. 
+
+The neural network gets no information about the rules of chess, so it is necessary to filter
+out the illegal moves. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/output-planes/unfiltered.png}
+    \caption{A subset of the 73 8x8 planes from the policy output. The brighter the pixel, the better the move. Grey padding was added to make a better visual presentation of the output planes.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/output-planes/filtered.png}
+    \caption{The same subset, but with the illegal moves filtered out}
+\end{figure}
+
+The above two images were made using a trained model. The policy output of an untrained model with random weights 
+looks like this:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/output-planes/random-model-unfiltered.png}
+    \caption{Some output planes from an untrained model. Black padding was used to make it clearer.}
+\end{figure}
+
+This shows it is clear the trained model has some understanding of which moves are legal, 
+without giving it any knowledge of the rules of chess. 
+
+\subsubsection{The evaluation step}
+
+The value received from the neural network is now assigned to the leaf node.
+
+\subsubsection{The backpropagation step}
+
+The value from the leaf node is now also added to every selected node in the path from the root to the leaf node.
+Concretely, for every selected edge in the path, the following values are changed:
+
+\begin{itemize}
+    \item The edge's input node's visit count is incremented by 1
+    \item The edge's visit count is incremented by 1
+    \item The edge's value is incremented by the value of the leaf node
+\end{itemize}
+
+
+\subsection{Saving training data}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/trainingset.png}
+    \caption{The training set consists of: the input state, the move probabilities, and the eventual winner}
+\end{figure}
+
+Every move is saved to memory in a simple Python list. Once the game is over, the winner is added to every move in memory.
+The whole game is then saved to a binary file in NumPy's .npy format. 
+When a new game starts, the memory is cleared.
+
+\subsection{Training the neural network}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/training.png}
+    \caption{The training pipeline}
+\end{figure}
+
+To train the neural network, every saved game's binary file is loaded 
+into memory. The memory is shuffled to avoid the neural network accidentally learning
+time dependent patterns. Random batches of the training set are then processed through the
+neural network.
+
+The position is used as the input to the neural network. The network's outputs are then 
+compared to the move probabilities and the winner from the dataset:
+
+\begin{itemize}
+    \item The move probabilities are converted to a 73x8x8 tensor, which is compared with the output of the network
+    \item The winner is compared with the value output of the network.
+\end{itemize}
+
+The training pipeline employs two separate loss functions. The policy head uses categorical cross-entropy
+and the value head uses mean squared error.
+
+\subsection{Multiprocessing}
+
+\subsection{The final project}
+
+% the files in the project
+
+\subsection{Porting to C++}
+
+
+
 
 %%%%% Reflection %%%%%
 \newpage
