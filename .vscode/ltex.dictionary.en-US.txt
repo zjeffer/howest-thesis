@@ -22,3 +22,7 @@ TPUs
 customizability
 Graphviz
 npy
+Lichess
+ClientHandler
+Ryzen
+PyGame

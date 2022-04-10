@@ -463,7 +463,7 @@ started developing a new algorithm called AlphaGo to play Go \cite{AlphaGo2022a}
 Previously, the strongest Go engines were still only good enough to win against amateur Go players \cite{AlphaGo}.
 The algorithm used a combination of the MCTS algorithm and a deep neural network to evaluate positions. 
 
-AlphaGo was built \cite{AlphaGo} \cite{MasteringGameGo}  by first training a neural network with supervised learning by using data from human games.
+AlphaGo was built \cite{AlphaGo, MasteringGameGo}  by first training a neural network with supervised learning by using data from human games.
 The weights of that network were then copied to a new reinforcement learning network. That network was used to 
 create a training set through self-play. By playing against itself and recording the board state, the 
 moves the network considered, and the eventual winner of the game, a training set was created.
@@ -480,7 +480,7 @@ residual layers instead of convolutional layers \cite{MasteringGameZero}.
 
 \subsection{AlphaZero}
 
-AlphaZero is a generalized version of AlphaGo Zero, created to master the games of chess, shogi (``Japanese chess''), and Go \cite{AlphaZero2022} \cite{silverMasteringChessShogi2017c}. 
+AlphaZero is a generalized version of AlphaGo Zero, created to master the games of chess, shogi (``Japanese chess''), and Go \cite{AlphaZero2022, silverMasteringChessShogi2017a}. 
 For chess, AlphaZero was evaluated against StockFish version 8 by playing 1000 games with 3 hours per player, plus 
 15 seconds per move. It won 155 times, lost 6 times and the remaining games were drawn. 
 AlphaZero uses a single neural network with two outputs, just like AlphaGo Zero. 
@@ -635,7 +635,7 @@ Creating the chess engine required programming the following parts:
     \item The evaluation pipeline
     \item A way to store every move to a dataset
     \item A class to make the engine play against itself
-    \item A GUI to play against the network
+    \item A GUI to play against the engine
     \item Docker containers for easily scaling and distributing the program
 \end{itemize}
 
@@ -693,6 +693,8 @@ The Python class to create the model was immediately made with customizability i
 the input and output shapes can be given as arguments, and the sizes of the convolution filters 
 can be changed using a configuration file.
 
+The neural network architecture is the same as AlphaZero's (see the Research section). 
+
 \subsection{A tree structure with nodes and edges}
 
 As mentioned before, the MCTS algorithm creates a tree structure to represent 
@@ -741,7 +743,7 @@ current position as the root node.
 
 \subsubsection{The selection step}
 
-For the selection step, the following UCB formula was used to determine which edge to select:
+For the selection step, the following UCB formula \cite{silverMasteringChessShogi2017a} was used to determine which edge to select:
 
 \begin{center}
     \begin{equation}
@@ -749,7 +751,7 @@ For the selection step, the following UCB formula was used to determine which ed
     \end{equation}
 \end{center}
 
-\begin{itemize}
+\begin{itemize} 
     \item $C_{\text{base}}$ and $C_{\text{init}}$ are constants that can be changed in the config file. The same values as AlphaZero were used.
     \item $N_{\text{parent}}$ is the visit count of the input node
     \item $N$ is the visit count of the edge
@@ -812,7 +814,7 @@ looks like this:
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{img/output-planes/random-model-unfiltered.png}
-    \caption{Some output planes from an untrained model. Black padding was used to make it clearer.}
+    \caption{Some output planes from an untrained model. Black padding was used instead of gray to make it clearer.}
 \end{figure}
 
 This shows it is clear the trained model has some understanding of which moves are legal, 
@@ -834,7 +836,7 @@ Concretely, for every selected edge in the path, the following values are change
 \end{itemize}
 
 
-\subsection{Saving training data}
+\subsection{Creating the dataset}
 
 
 \begin{figure}[H]
@@ -843,9 +845,32 @@ Concretely, for every selected edge in the path, the following values are change
     \caption{The training set consists of: the input state, the move probabilities, and the eventual winner}
 \end{figure}
 
+To improve the performance of the neural network, the algorithm needs to play against itself for a high amount of games.
 Every move is saved to memory in a simple Python list. Once the game is over, the winner is added to every move in memory.
 The whole game is then saved to a binary file in NumPy's .npy format. 
 When a new game starts, the memory is cleared.
+
+\subsubsection{Creating a dataset from puzzles}
+
+Because creating the dataset is extremely time-consuming, I came up with the idea to also
+create data from chess puzzles. The idea is to let the agent play from a certain given position (the puzzle), 
+instead of from the start of the game, and see if the agent can find the correct solution.
+This would in theory give the model a better understanding of common chess tactics, without having to play
+whole games from start to finish.
+
+A chess puzzle is a position with one simple goal: find the best move or sequence of moves.
+Lichess.org, the open source chess website, has a huge database of over 2 million of these puzzles publicly available for free \cite{LichessOrgOpen}. 
+These are the most common puzzle categories:
+
+\begin{itemize}
+    \item Mate-in-X: find the best moves to checkmate the opponent in a maximum of X moves
+    \item Capturing one of the opponent's undefended pieces
+    \item Getting a positional advantage
+\end{itemize}
+
+When creating the dataset, mate-in-1 and mate-in-2 puzzles were also added to the dataset. This is because these kinds of puzzles
+end quickly (and are thus less time-consuming), and they have a clear winner: the player who can checkmate the opponent.
+The Lichess database has over 400,000 puzzles of these two types. 
 
 \subsection{Training the neural network}
 
@@ -871,13 +896,217 @@ compared to the move probabilities and the winner from the dataset:
 The training pipeline employs two separate loss functions. The policy head uses categorical cross-entropy
 and the value head uses mean squared error.
 
+\subsubsection{The first training session}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/first-training.png}
+    \caption{First training session}
+\end{figure}
+
+Naturally, the first training session started with a random model. 
+The dataset was created by running self-play for many hours, resulting in a dataset of around
+76,000 positions. Training was performed with a learning rate of 0.002, and a batch size of 64.
+The model uses the Adam optimizer.
+
+After training, the model was saved to disk.
+
+\subsubsection{The second training session}
+
+The previous model was used as the starting point for the second training session.
+A new dataset was made using only games created by that model. 
+This time, due to time constraints, the dataset only had 50,000 positions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/second-training.png}
+    \caption{Second training session}
+\end{figure}
+
+It's clear the model manages to learn something at the start of the training session,
+but seems to plateau after 150 batches. Because the first training session started from 
+a random model, it managed to learn a lot more before reaching a plateau after around 600 batches.
+
 \subsection{Multiprocessing}
+
+Because self-play is very time-consuming, there needed to be a way to play multiple games in parallel.
+
+\subsubsection{Without multiprocessing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{img/without-multiprocessing.png}
+    \caption{Self-play without multiprocessing}
+\end{figure}
+
+Previously, every game was played in its own process, but every agent needed to send predictions to a neural network.
+This resulted in every process creating its own copy of the neural network. This is extremely heavy for the GPU, and
+it's impossible to scale. Due to VRAM limits, only two games could be played in parallel on my system (RTX 3070).
+
+\subsubsection{With multiprocessing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/with-multiprocessing.png}
+    \caption{Self-play with multiprocessing}
+\end{figure}
+
+To solve the issue of parallel self-play, I created a client-server architecture with Python sockets.
+The server side has access to the neural network. For every client (the self-play process), 
+the server creates a ClientHandler in a new thread.
+
+Here's how one client works:
+
+\begin{enumerate}
+    \item The MCTS algorithm runs 100s of simulations every move. Every simulation sends a chess position to the neural network.
+    \item The agent sends the chess position through a socket.
+    \item The ClientHandler receives the chess position and sends it to the server.
+    \item The server calls the network's predict function and returns the outputs to the client handler.
+    \item The ClientHandler sends the outputs back to the client.
+\end{enumerate}
+
+This socket communication does have a small overhead in both time and CPU usage, but it's much faster than the previous method
+because it is much more scalable. Here's a comparison of the two methods, with the server running on the first system:
+
+\begin{table}[H]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccll}
+\cline{1-3}
+\multicolumn{1}{|l|}{}                                  & \multicolumn{1}{c|}{\textbf{No multiprocessing}} & \multicolumn{1}{c|}{\textbf{With multiprocessing (8 games)}} &  &  \\ \cline{1-3}
+\multicolumn{1}{|l|}{\textbf{RTX 3070 + Ryzen 7 5800H}} & \multicolumn{1}{c|}{50 simulations/sec}          & \multicolumn{1}{c|}{30 simulations/sec per game}             &  &  \\ \cline{1-3}
+\multicolumn{1}{|l|}{\textbf{GTX 1050 + i7 7700HQ}}     & \multicolumn{1}{c|}{30 simulations/sec}          & \multicolumn{1}{c|}{15 simulations/sec per game}             &  &  \\ \cline{1-3}
+                                                        & \multicolumn{1}{l}{}                             & \multicolumn{1}{l}{}                                         &  & 
+\end{tabular}%
+}
+\caption{Comparison of multiprocessing and non-multiprocessing self-play}
+\end{table}
+
+With 8 games in parallel on the first system, I managed to get an average speed of $30 \cdot 8 = 240$ simulations per second.
+The second system is much less powerful and needed to connect over Wi-Fi, but it still managed an average of $120$ simulations per second. 
+
+\subsection{A GUI to play against the engine}
+
+The GUI was based on a GitHub project that someone created for simply visualizing a chessboard with PyGame \cite{adefokunChessboardAhirajustice2022, pygame}.
+I greatly improved and expanded that project to include a way for the player to interact with the board, play against an engine,
+play against yourself, and more \cite{zjefferChessboardZjeffer2022}. I created a pull request to include my changes in the original author's GitHub project,
+but it was declined due to being due extensive and out-of-scope for the project \cite{adefokunChessboard2022pull}.
+
+Using this code, a GUI class was created for playing against the engine. The player can choose a color and play against
+the engine. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/chessboard-gui.png}
+    \caption{Chessboard example when playing against the engine}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/chessboard-promotion.png}
+    \caption{Promoting a pawn}
+\end{figure}
+
+\subsection{Docker images}
+
+Because the amount of data needed to train the neural network is very large, two docker images were created:
+
+\begin{itemize}
+    \item A server image that runs the neural network and listens for clients.
+    \item A client image that runs self-play and sends chess positions to the server.
+\end{itemize}
+
+With a docker-compose file, the server and client images can be easily started. The number of clients 
+to run in parallel can be easily configured.
+
+It's recommended to run the server on a fast GPU-equipped system, and the clients on a system with many high-performance CPU cores.
+The clients do not need a GPU to run self-play.
 
 \subsection{The final project}
 
-% the files in the project
+This section walks through all executable programs included in the project \cite{zjefferChessEngineDeep2022}.
+
+\subsubsection{Creating your own untrained AI model}
+
+\begin{minted}{text}
+$ python rlmodelbuilder.py --help
+usage: rlmodelbuilder.py [-h] [--model-folder MODEL_FOLDER] [--model-name MODEL_NAME]
+
+Create the neural network for chess
+
+options:
+  -h, --help            show this help message and exit
+  --model-folder MODEL_FOLDER
+                        Folder to save the model
+  --model-name MODEL_NAME
+                        Name of the model (without extension)
+\end{minted}
+
+This will create a new model with the name <NAME> in the folder <FOLDER>.
+The model parameters (amount of hidden layers, input and output shapes if you want to use the network for a different game, the amount of convolution filters, etc.)
+can be changed by editing the config.py file.
+
+\subsubsection{Creating a training set through self-play}
+
+Running the docker containers:
+
+\begin{minted}{shell}
+# in the repo's code/ folder:
+docker-compose up --build
+\end{minted}
+
+You can also manually run self-play or create data using puzzles:
+
+\begin{minted}{text}
+$ python3 selfplay.py --help
+usage: selfplay.py [-h] [--type {selfplay,puzzles}] [--puzzle-file PUZZLE_FILE] 
+    [--puzzle-type PUZZLE_TYPE] [--local-predictions]
+
+Run self-play or puzzle solver
+
+options:
+    -h, --help            show this help message and exit
+    --type {selfplay,puzzles}
+                        selfplay or puzzles
+    --puzzle-file PUZZLE_FILE
+                        File to load puzzles from (csv)
+    --puzzle-type PUZZLE_TYPE
+                        Type of puzzles to solve. Make sure to set a 
+                        puzzle move limit in config.py if necessary
+    --local-predictions   Use local predictions instead of the server
+\end{minted}
+
+\subsubsection{Evaluating two models}
+
+To determine whether your new model is better than the previous best, you can use the evaluate.py script.
+It will simulate matches between the two models and record the wins, draws and losses.
+
+In chess, white inherently has a slightly higher chance of winning because they can play the first move \cite{FirstmoveAdvantageChess2022}.
+Therefore, to evaluate two models, each model will both play white and black an equal amount of times.
+
+\begin{minted}{text}
+$ python3 evaluate.py --help
+usage: evaluate.py [-h] model_1 model_2 nr_games
+
+Evaluate two models
+
+positional arguments:
+  model_1     Path to model 1
+  model_2     Path to model 2
+  nr_games    Number of games to play (x2: every model plays both white and black)
+
+options:
+  -h, --help  show this help message and exit
+\end{minted}
+
 
 \subsection{Porting to C++}
+
+Optimization is extremely important for chess engines, especially when the engine needs to play
+against itself to create a dataset. That is why Python was not an ideal choice to implement this chess engine.
+
+Currently, I'm writing a C++ version of the engine in my spare time \cite{zjefferChessdeeprlcpp2022}. Instead of TensorFlow Keras, I've opted to 
+use PyTorch instead. So far, I've noticed that the C++ version with PyTorch manages to run the MCTS algorithm 
+four times faster than the Python version: 200 simulations per second instead of 50.
 
 
 
