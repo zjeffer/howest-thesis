@@ -992,13 +992,17 @@ play against yourself, and more \cite{zjefferChessboardZjeffer2022}. I created a
 but it was declined due to being due extensive and out-of-scope for the project \cite{adefokunChessboard2022pull}.
 
 Using this code, a GUI class was created for playing against the engine. The player can choose a color and play against
-the engine. 
+the engine. Clicking on a piece will highlight its square, clicking on another square will move the piece to that square.
+Right-clicking will cancel the move.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{img/chessboard-gui.png}
     \caption{Chessboard example when playing against the engine}
 \end{figure}
+
+Promoting a pawn can be done by simply moving a pawn to the last rank. A menu will pop up 
+to choose the piece to promote to.
 
 \begin{figure}[H]
     \centering
@@ -1016,7 +1020,7 @@ Because the amount of data needed to train the neural network is very large, two
 \end{itemize}
 
 With a docker-compose file, the server and client images can be easily started. The number of clients 
-to run in parallel can be easily configured.
+to run in parallel can be easily configured in that file.
 
 It's recommended to run the server on a fast GPU-equipped system, and the clients on a system with many high-performance CPU cores.
 The clients do not need a GPU to run self-play.
@@ -1047,17 +1051,21 @@ can be changed by editing the config.py file.
 
 \subsubsection{Creating a training set through self-play}
 
-Running the docker containers:
+Creating the docker containers:
 
 \begin{minted}{shell}
 # in the repo's code/ folder:
 docker-compose up --build
 \end{minted}
 
+This will create one server and the amount of clients that is configured in the docker-compose.yml file.
+That file can also be used as a reference to deploy a Kubernetes cluster for parallel self-play with 
+high scalability and reliability. 
+
 You can also manually run self-play or create data using puzzles:
 
 \begin{minted}{text}
-$ python3 selfplay.py --help
+$ python selfplay.py --help
 usage: selfplay.py [-h] [--type {selfplay,puzzles}] [--puzzle-file PUZZLE_FILE] 
     [--puzzle-type PUZZLE_TYPE] [--local-predictions]
 
@@ -1084,7 +1092,7 @@ In chess, white inherently has a slightly higher chance of winning because they 
 Therefore, to evaluate two models, each model will both play white and black an equal amount of times.
 
 \begin{minted}{text}
-$ python3 evaluate.py --help
+$ python evaluate.py --help
 usage: evaluate.py [-h] model_1 model_2 nr_games
 
 Evaluate two models
@@ -1098,6 +1106,21 @@ options:
   -h, --help  show this help message and exit
 \end{minted}
 
+\subsubsection{Playing against the AI}
+
+\begin{minted}{text}
+$ python main.py --help
+usage: main.py [-h] [--player {white,black}] [--local-predictions] [--model MODEL]
+
+options:
+  -h, --help            show this help message and exit
+  --player {white,black}
+                        Whether to play as white or black. No argument means random.
+  --local-predictions   Use local predictions instead of the server
+  --model MODEL         For local predictions: specify the path to the model to use.
+\end{minted}
+
+This will start the GUI application to allow you to play against the engine. 
 
 \subsection{Porting to C++}
 
