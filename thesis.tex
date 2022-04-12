@@ -1138,6 +1138,70 @@ four times faster than the Python version: 200 simulations per second instead of
 \newpage
 \section{Reflection}
 
+\subsection{Introduction}
+
+This section is a reflection on the project. It will answer the following questions:
+
+\begin{itemize}
+    \item What are the strengths and weaknesses of this research project?
+    \item Is the result of the project usable for corporations?
+    \item What are the possible obstacles for companies that wish to implement this?
+    \item What is the added value for companies?
+    \item Which alternatives are there?
+    \item Is there a socio-economic impact present?
+    \item Is there opportunity for further research?
+\end{itemize}
+
+Answering these questions was done with help from:
+
+\begin{itemize}
+    \item TODO
+\end{itemize}
+
+\subsection{Strengths and weaknesses}
+
+This project successfully implements the MCTS algorithm as modified by DeepMind for AlphaZero and their preceding work,
+AlphaGo and AlphaGo Zero. The resulting chess engine can be played against using the GUI, and it can be used to create
+a dataset for further improving the neural network. The project serves as an example of how MCTS can be implemented
+in a chess engine using Python and consumer-grade hardware. 
+
+The project offers a way to easily create your own neural network with the rlmodelbuilder.py script.
+The code is written with modularity and adaptability in mind: by changing parameters in the config.py file, 
+you can easily create a different model for chess, or for similar applications with different input and output shapes. 
+The MCTS algorithm can be used as a reference if you want to implement it other applications.
+
+The ultimate goal of this research project was to create a chess engine that is at least capable of winning
+against amateur players of around 1000 ELO. This was not possible with my consumer-grade hardware: 
+the chess engine still seems to play very randomly and has not found a good winning strategy. 
+The biggest hurdle was the lack of computational resources to create a large dataset.
+
+The project does offer a solution to create more data through self-play: with the docker containers, 
+it is easy for other people to help create a dataset by deploying their own cluster of servers and clients. 
+This way, a global dataset could be made by combining self-play data from volunteers around the world. 
+It can then be used to train a new model. 
+
+This is exactly how Leela Chess Zero operates: the developers created a simple program for volunteers to run,
+which let the latest model play against itself and uploads the games back to the developers. Once there is
+enough data, the developers can retrain the model. By continuously repeating this process, Leela Chess Zero
+slowly became a powerful chess engine on par with the best chess engines in the world \cite{TopChessEngine2022}.
+
+\subsection{Is the result of the project usable in the corporate world?}
+
+\subsection{What are the possible obstacles for companies that wish to implement this?}
+
+\subsection{What is the added value for companies?}
+
+\subsection{Which alternatives are there?}
+
+\subsection{Is there a socio-economic impact present?}
+
+\subsection{Is there opportunity for further research?}
+
+
+
+
+
+
 %%%%% Advice %%%%%
 \newpage
 \section{Advice}
