@@ -1152,11 +1152,10 @@ This section is a reflection on the project. It will answer the following questi
     \item Is there opportunity for further research?
 \end{itemize}
 
-Answering these questions was done with help from:
-
-\begin{itemize}
-    \item TODO
-\end{itemize}
+To help answer these questions, I have consulted with Dr. Thomas Moerland, a postdoctoral 
+researcher at the Reinforcement Learning Group at Leiden University, in The Netherlands \cite{ThomasMoerlandPostdoc}. 
+With his experience in researching AI and specifically Reinforcement Learning, he was able 
+to give me some insights into how AlphaZero could impact society in industries besides gaming.
 
 \subsection{Strengths and weaknesses}
 
@@ -1187,13 +1186,88 @@ slowly became a powerful chess engine on par with the best chess engines in the 
 
 \subsection{Is the result of the project usable in the corporate world?}
 
+While AlphaZero and its variants have mostly been used in gaming applications, 
+the project is not limited to this. For instance, AlphaGo has been used by Google
+to properly ventilate their data centers more efficiently. The algorithm helped lower
+data center cooling costs by 40\% \cite{decemberHasGoogleCracked2020}. 
+
+Theoretically, this project can be used to solve virtually any problem that can be
+defined as an agent acting upon an environment with a limited action space.
+
+Many websites that have recommendation systems have already used reinforcement learning 
+to improve which products get recommended to users \cite{nbroAnswerAreThere2020}. For example, Netflix uses
+contextual bandits to personalize artwork to the user \cite{blogArtworkPersonalizationNetflix2017,surmenokContextualBanditsReinforcement2017}.
+This avoids the need for waiting to collect data from users, training a model,
+waiting for an A/B test to conclude, to then finally recommend the best artwork.
+By then, too many users have ignored an item they would have otherwise clicked on.
+
+\cite{slaterAnswerAreThere2017}
+
 \subsection{What are the possible obstacles for companies that wish to implement this?}
+
+Depending on the application, the amount of data necessary to train a sufficiently powerful model
+can be extremely large. It's necessary for the company to have a good infrastructure to 
+create this data. Companies can also invest in cloud solutions like the Google Cloud Platform
+to take advantage of their TPUs \cite{CloudComputingServices}.
+
+Because these types of algorithms need to be trained through self-play, applications should be written
+in a programming language that is capable of training and inferring neural networks, 
+but should also be very performant and efficient. 
+Fast, low-level programming languages like C++ often require much more development time
+to create the same application compared to high-level programming languages like Python. 
+This should also be factored into the development process.
+
+AI frameworks like TensorFlow and PyTorch are available in both Python and C++, 
+but documentation and support is lacking in the C++ versions. This means companies 
+who wish to implement this type of application will need to hire C++ developers who
+are also experienced with neural networks.
 
 \subsection{What is the added value for companies?}
 
+Options are always useful, and this project offers a way to solve problems 
+using AI without having to manually collect data. The reinforcement learning agent 
+will collect data for you by playing against itself. This means the algorithm will
+get better in a ``fire-and-forget'' manner: just launch a cluster of self-play agents
+and wait until it gathers enough data. You could create an automatic pipeline to
+retrain the model after a set amount of time or after a certain amount of games.
+
 \subsection{Which alternatives are there?}
 
+For chess specifically, there are many chess engines that can be used for both analysis
+and playing against. StockFish is the most popular, and as mentioned before, 
+Leela Chess Zero is also open source and works the same way as AlphaZero. 
+
+For industries other than the gaming industry, (deep) reinforcement learning can be
+used to find new solutions
+
+
+
 \subsection{Is there a socio-economic impact present?}
+
+Sadly, algorithms like AlphaZero fail at solving even relatively simple problems like chess when the model 
+does not have enough data to train on.  \cite{ThomasMoerlandPostdoc}. 
+Given enough time and data, though, these types of algorithms can be used to achieve superhuman
+performance in applications that were previously impossible to find optimal solutions for.
+
+DeepMind's ultimate goal is to ``[...] solve intelligence, developing more general and capable 
+problem-solving systems, known as artificial general intelligence (AGI).'' \cite{DeepMind}.
+This is a slow and extremely difficult process, but DeepMind is confident AlphaZero and 
+its variants are a big step towards that goal \cite{AlphaZeroSheddingNew}.
+
+Others are more pessimistic about the progress DeepMind has made \cite{ThomasMoerlandPostdoc,dukezhouAnswerAlphaZeroExample2018},
+explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective games, 
+this does not mean their results a particularly big step towards AGI. 
+
+\begin{quotation}
+    I think there is a huge gap between the simple games we now solve and the 
+    'artificial general intelligence' that DeepMind is trying to achieve.
+    I believe that the most progress won't come from algorithms, but from calculations.
+    For general AI, we need incredibly strong simulators where a huge amount of data
+    can be passed through for a very long time. 
+    Just like the millions of years of evolution our brains have been through, our brains
+    have been gathering data non-stop throughout our lives. \cite{ThomasMoerlandPostdoc}
+\end{quotation}
+
 
 \subsection{Is there opportunity for further research?}
 
@@ -1205,6 +1279,15 @@ slowly became a powerful chess engine on par with the best chess engines in the 
 %%%%% Advice %%%%%
 \newpage
 \section{Advice}
+
+\subsection{Introduction}
+
+This section gives advice to people who wish to implement something similar to the project.
+It includes recommendations and tips for when people want to program an application that uses
+the algorithms and concepts researched in this thesis.
+
+\subsection{When should you use this technology?}
+
 
 %%%%% Conclusion %%%%%
 \newpage
