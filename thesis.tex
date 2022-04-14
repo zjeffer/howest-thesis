@@ -131,7 +131,7 @@ deep reinforcement learning based on DeepMind's AlphaZero algorithm.
 
 I will explain the research I needed to create it, the technical details on how to program the
 chess engine and I will reflect on the results of the project. To do this, I will contact 
-multiple people familiar with the field of reinforcement learning to get a better understanding of the
+multiple people and communities familiar with the field of reinforcement learning to get a better understanding of the
 impact of this research on society. Based on this, I will give advice to people and companies who 
 wish to implement similar algorithms.
 
@@ -160,8 +160,6 @@ the motivation to get the best I can out of my studies.
 \addcontentsline{toc}{section}{Abstract}
 
 
-% TODO: abstract verder aanvullen
-
 % Samenvatting of abstract (mag in het Engels): MAX 1 halve A4-pagina: 
 % Je beantwoordt in de samenvatting kort en bondig een viertal vragen: 
 % X Wat is de onderzoeksvraag?
@@ -178,12 +176,13 @@ The technical research shows what is needed to create my implementation using Py
 It shows how to program the chess engine, how to build the neural network, and how to train and evaluate the network.
 During the creation of this chess engine, it was crucial to create a huge amount of data through self-play.
 
+% TODO: abstract volledig herschrijven vanaf hier
+
 The thesis contains a reflection on the results of my research project, which proposes a solution to the problem of
 creating a high amount of games through self-play. It also reflects on the impact of this research on society, and the
-viability of this type of artificial intelligence in the future. With this comes a section on advice for companies that wish
-to implement similar algorithms.
+viability of this type of artificial intelligence in the future. It follows with advice to people and companies who wish to implement similar algorithms. 
 
-% It concludes... (TODO)
+% TODO: CONCLUSION
 
 
 \newpage
@@ -204,10 +203,10 @@ to implement similar algorithms.
 \newpage
 
 % TODO: Remove if no tables
-% \section*{List of tables}
-% \addcontentsline{toc}{section}{List of tables}
-% \renewcommand{\listtablename}{}
-% \listoftables
+\section*{List of tables}
+\addcontentsline{toc}{section}{List of tables}
+\renewcommand{\listtablename}{}
+\listoftables
 
 %%%%% List of abbreviations %%%%%
 \section*{List of abbreviations}
@@ -250,16 +249,19 @@ Throughout the entire history of computer science, researchers have continuously
 ways to calculate if a position is winning or losing. The most famous example is the StockFish 
 engine \cite{StockfishChess2022}, which uses the minimax algorithm with alpha-beta pruning to calculate the best move.
 
-More recently, researchers at Google DeepMind have developed a new algorithm called AlphaZero \cite{AlphaZero2022}.
+Recently, researchers at Google DeepMind have developed a new algorithm called AlphaZero \cite{AlphaZero2022}.
 This thesis explores the concept of AlphaZero, how to create a chess engine based on it, and the impact of 
 the algorithm on both the world of chess and the rest of society.
 
 Research has been conducted by investigating what is needed to recreate the results of AlphaZero, 
-by programming a simple implementation using Python and TensorFlow. This was done as part of a research project
+by programming a simple implementation using Python and TensorFlow Keras. This was done as part of a research project
 between November 2021 and January 2022. The code was written with lots of trial and error, as DeepMind released 
-very little information about the detailed workings of the algorithm. 
+very little information about the detailed workings of the algorithm. It also only released a simple version of 
+the algorithm in pseudocode, so it isn't possible to directly compare AlphaZero with other chess engines.
 
-% TODO: more info
+As I have been playing chess for most of my life, I was naturally very interested in the workings of AlphaZero
+and why it worked so well against the StockFish engine. Because AlphaZero was trained on supercomputers, 
+I wanted to investigate where its flaws lie when implementing it in Python on consumer hardware.
 
 
 %%%%% Add Howest background %%%%%
@@ -1157,12 +1159,20 @@ researcher at the Reinforcement Learning Group at Leiden University, in The Neth
 With his experience in researching AI and specifically Reinforcement Learning, he was able 
 to give me some insights into how AlphaZero could impact society in industries besides gaming.
 
+I have also asked questions to the following online communities:
+
+\begin{itemize}
+    \item The AI Stack Exchange community % TODO: link
+    \item The Leela Chess Zero Discord community 
+    \item % TODO: The TalkChess forum, a forum affiliated with The Chess Programming Wiki
+\end{itemize}
+
 \subsection{Strengths and weaknesses}
 
 This project successfully implements the MCTS algorithm as modified by DeepMind for AlphaZero and their preceding work,
 AlphaGo and AlphaGo Zero. The resulting chess engine can be played against using the GUI, and it can be used to create
-a dataset for further improving the neural network. The project serves as an example of how MCTS can be implemented
-in a chess engine using Python and consumer-grade hardware. 
+a dataset for further improving the neural network. The project serves as an example of how AlphaZero's MCTS algorithm 
+can be implemented in a chess engine using Python and consumer-grade hardware. 
 
 The project offers a way to easily create your own neural network with the rlmodelbuilder.py script.
 The code is written with modularity and adaptability in mind: by changing parameters in the config.py file, 
@@ -1174,13 +1184,13 @@ against amateur players of around 1000 ELO. This was not possible with my consum
 the chess engine still seems to play very randomly and has not found a good winning strategy. 
 The biggest hurdle was the lack of computational resources to create a large dataset.
 
-The project does offer a solution to create more data through self-play: with the docker containers, 
+However, the project does offer a solution to create more data through self-play: with the docker containers, 
 it is easy for other people to help create a dataset by deploying their own cluster of servers and clients. 
 This way, a global dataset could be made by combining self-play data from volunteers around the world. 
 It can then be used to train a new model. 
 
 This is exactly how Leela Chess Zero operates: the developers created a simple program for volunteers to run,
-which let the latest model play against itself and uploads the games back to the developers. Once there is
+which makes the latest model play against itself and uploads the data back to the developers. Once there is
 enough data, the developers can retrain the model. By continuously repeating this process, Leela Chess Zero
 slowly became a powerful chess engine on par with the best chess engines in the world \cite{TopChessEngine2022}.
 
@@ -1190,18 +1200,27 @@ While AlphaZero and its variants have mostly been used in gaming applications,
 the project is not limited to this. For instance, AlphaGo has been used by Google
 to properly ventilate their data centers more efficiently. The algorithm helped lower
 data center cooling costs by 40\% \cite{decemberHasGoogleCracked2020}. 
+It does this by periodically pulling data from many sensors and feeding that data to 
+a deep neural network to predict how different combinations of potential actions
+will affect future energy consumption \cite{HowAIHelps2018}.
 
 Theoretically, this project can be used to solve virtually any problem that can be
-defined as an agent acting upon an environment with a limited action space.
+defined as an agent acting upon an environment with discrete state and action spaces \cite{ReinforcementLearning2022a}.
 
+Reinforcement learning in general has been used to solve a wide range of problems.
 Many websites that have recommendation systems have already used reinforcement learning 
-to improve which products get recommended to users \cite{nbroAnswerAreThere2020}. For example, Netflix uses
-contextual bandits to personalize artwork to the user \cite{blogArtworkPersonalizationNetflix2017,surmenokContextualBanditsReinforcement2017}.
+to improve which products get recommended to users \cite{nbroAnswerAreThere2020}. 
+For example, Netflix uses contextual bandits to personalize artwork to the user \cite{blogArtworkPersonalizationNetflix2017,surmenokContextualBanditsReinforcement2017}.
 This avoids the need for waiting to collect data from users, training a model,
 waiting for an A/B test to conclude, to then finally recommend the best artwork.
 By then, too many users have ignored an item they would have otherwise clicked on.
 
-\cite{slaterAnswerAreThere2017}
+% TODO \cite{slaterAnswerAreThere2017}
+
+% TODO: openai five
+
+In the field of robotics, (deep) reinforcement learning can be used to teach a robot
+through self-play to perform simple tasks that previously required manual programming.
 
 \subsection{What are the possible obstacles for companies that wish to implement this?}
 
@@ -1237,8 +1256,20 @@ For chess specifically, there are many chess engines that can be used for both a
 and playing against. StockFish is the most popular, and as mentioned before, 
 Leela Chess Zero is also open source and works the same way as AlphaZero. 
 
-For industries other than the gaming industry, (deep) reinforcement learning can be
-used to find new solutions
+For industries other than the gaming industry, many problems are solvable by using
+machine learning algorithms instead of reinforcement learning solutions. 
+Supervised learning methods have a very wide range of applications, provided 
+you have the data to train a model.
+
+However, if you don't have a means to gather data, there are many reinforcement
+learning algorithms other than AlphaZero:
+
+\begin{itemize}
+    \item Q-learning
+    \item SARSA
+    \item DQN
+    \item Actor-Critic methods like A2C or A3C
+\end{itemize}
 
 
 
@@ -1254,7 +1285,7 @@ problem-solving systems, known as artificial general intelligence (AGI).'' \cite
 This is a slow and extremely difficult process, but DeepMind is confident AlphaZero and 
 its variants are a big step towards that goal \cite{AlphaZeroSheddingNew}.
 
-Others are more pessimistic about the progress DeepMind has made \cite{ThomasMoerlandPostdoc,dukezhouAnswerAlphaZeroExample2018},
+Others are more pessimistic about the progress DeepMind has made \cite{emailmoerlandEmailExchangeTuur22, dukezhouAnswerAlphaZeroExample2018},
 explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective games, 
 this does not mean their results a particularly big step towards AGI. 
 
@@ -1265,11 +1296,22 @@ this does not mean their results a particularly big step towards AGI.
     For general AI, we need incredibly strong simulators where a huge amount of data
     can be passed through for a very long time. 
     Just like the millions of years of evolution our brains have been through, our brains
-    have been gathering data non-stop throughout our lives. \cite{ThomasMoerlandPostdoc}
+    have been gathering data non-stop throughout our lives. \cite{moerlandEmailExchangeTuur22}
 \end{quotation}
 
 
 \subsection{Is there opportunity for further research?}
+
+While reinforcement learning has existed for a long time, deep reinforcement learning techniques 
+have only recently been used. This is because of the lack of computational resources to train
+a well-performing model. With high performance computing devices and cloud solutions getting cheaper
+and more powerful, a lot of research opportunities open up.
+Deep Reinforcement learning for autonomous driving has recently become an active area of research 
+in both academia and industry \cite{DeepReinforcementLearning2022a}.
+
+For this project specifically, there is still a lot of research opportunity to try to solve the problem
+of creating a large enough dataset to train a sufficiently powerful model.
+
 
 
 
@@ -1288,10 +1330,60 @@ the algorithms and concepts researched in this thesis.
 
 \subsection{When should you use this technology?}
 
+This algorithm has a very specific purpose. It should only be used in situations where
+both the action space and state space are discretely defined. Both of these should also
+be relatively small, as bigger action spaces and state spaces will require much more 
+data to successfully train a model. 
+Therefore, it is important to keep the problem as simple as possible. 
+
+\subsection{Recommendations}
+
+When you want to implement AlphaZero or similar algorithms, it is recommended to
+prioritize writing code in the most efficient way possible. Every step of the algorithm
+should be programmed with multiprocessing and multithreading in mind. Furthermore,
+the choice of programming language should be considered carefully. While most AI 
+frameworks are primarily written in Python, the language just isn't fast enough for
+something that needs this much data through self-play. 
+
+As was apparent from the results of the research project, generating training data 
+takes a very long time. A good solution to this problem is to first pretrain the model
+on a small dataset. This will result in a model that is at least slightly familiar 
+with the environment. Without a pretrained model, the algorithm will start from nothing
+and make completely random actions. With a pretrained model, the algorithm will have some 
+idea on what decisions to make based on the data it was given in pretraining.
+
+% TODO
+
 
 %%%%% Conclusion %%%%%
 \newpage
 \section{Conclusion}
+
+This thesis was created to critically evaluate my research project that tried to 
+answer the question ``How to create a chess engine using deep reinforcement learning''.
+The aim of the project was to create a chess engine based on DeepMind's AlphaZero in
+Python with TensorFlow Keras. This was attempted by programming the MCTS algorithm 
+and a neural network that can train on data collected from self-play. 
+The ultimate goal of the project was not to create a chess engine that was capable of 
+beating AlphaZero, but rather to create a simple version of AlphaZero that could 
+beat amateur chess players of around 1000 ELO. 
+
+Sadly, the resulting chess engine has not managed to reach this goal.
+This is because of the lack of computational resources necessary to create a big enough
+dataset through self-play. However, this thesis does offer some solutions to this problem:
+
+\begin{itemize}
+    \item Pretrain the model on a small dataset
+    \item Use docker containers to set up a cluster of self-play agents
+\end{itemize}
+
+This thesis also serves as a warning to people who wish to implement similar algorithms
+without having the necessary access to powerful hardware. It recommends investigating certain 
+alternatives to AlphaZero, such as other reinforcement techniques like Q-learning, SARSA, and DQN,
+but also supervised learning techniques if training data is available.
+
+
+
 
 %%%%% Bibliography %%%%%
 \newpage

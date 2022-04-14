@@ -13,3 +13,4 @@
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q`sep-conv': two towers of 12 convolutional blocks each: one with the policy head and one with the value head.\\E$"}
 {"rule":"IF_IS","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if white \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if black\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QTODO\\E$"}
+{"rule":"POSSESSIVE_APOSTROPHE","sentence":"^\\QHow can algorithms like AlphaZero be used in other industries besides the games industry?\\E$"}
