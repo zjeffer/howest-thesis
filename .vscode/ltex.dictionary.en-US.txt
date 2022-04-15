@@ -28,3 +28,5 @@ Ryzen
 PyGame
 Moerland
 SARSA
+TalkChess
+gRPC

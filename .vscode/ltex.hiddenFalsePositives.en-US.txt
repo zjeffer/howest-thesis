@@ -14,3 +14,5 @@
 {"rule":"IF_IS","sentence":"^\\Q\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if white \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q if black\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QTODO\\E$"}
 {"rule":"POSSESSIVE_APOSTROPHE","sentence":"^\\QHow can algorithms like AlphaZero be used in other industries besides the games industry?\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThis can be done by settings the \"SELFPLAY_SHOW_BOARD\" environment variable in docker-compose.yml to \"true\".\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThis can be done by settings the “SELFPLAYSHOWBOARD” environment variable in docker-compose.yml to “true”.\\E$"}

@@ -579,7 +579,7 @@ For chess, 73 different types of actions are possible:
 \end{itemize}
 
 These 73 actions are each represented by a plane of 8x8 float values. Say the first plane is a queen-like move
-to move a piece one square northwest, the second plane could the same type of move, but a distance of two squares, and so on.
+to move a piece one square northwest, the second plane could be the same type of move, but a distance of two squares, and so on.
 The squares on these planes represent the square from which to pick up a piece. 
 
 % TODO: example
@@ -588,13 +588,11 @@ The result is a $73 \cdot 8 \cdot 8$ vector of probabilities, so $4672$ float va
 
 \subsection{Training the network}
 
-To train this type of network, it's necessary to create a dataset. 
+To train this type of network, it's necessary to create a large dataset. 
 This is done by letting the engine play against itself for a high amount of matches. 
-Every move, data is collected and stored in a training set.
+For every action taken by the agent, data is collected and stored in the training set.
 For complex games like chess, shogi and Go, this training set needs to be huge
 because of the extremely large amount of possible situations.
-
-
 
 \subsubsection{Tensor Processing Units (TPU)}
 
@@ -789,11 +787,39 @@ If there are no legal moves, the outcome (draw, win, loss) is checked and the le
 is passed to the next step in the algorithm.
 
 If there are legal moves, the leaf node is given as an input to the neural network.
-The neural network will return the policy and the value of the position.
 
+While AlphaZero uses an input shape of 119 8x8 boolean boards, I opted for a much lighter 
+input shape. The input used in this project only has 19 boards:
+
+\begin{itemize}
+    \item 1 board to show which turn it is: 1 is white and 0 is black
+    \item 4 boards to show if each player still has castling rights
+    \item 1 board to show if a draw is possible after 50 moves without a capture or pawn move
+    \item 12 boards to show the positions of the pieces on the board
+    \item 1 board to show the en passant square: if a pawn can be taken en passant, this square is set to 1
+\end{itemize}
+
+For example: 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{img/input-boards2.png}
+    \caption{Board example}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/input-boards.png}
+    \caption{The input state converted from the above example board}
+\end{figure}
+
+Notice how the last square shows the square were en passant is possible.
+Grey padding was added to make a better visual presentation of the output planes.
+
+The neural network will return the policy and the value of the position.
 As described in the research part of this thesis, the value is a float between -1 and 1, and the 
-policy is a 73x8x8 tensor. This policy is mapped to a dictionary, where keys are moves and 
-the values are the probabilities of each move. 
+policy is a 73x8x8 tensor of floats. This policy is then mapped to a dictionary, where keys are moves and 
+the values are the probabilities of each move.
 
 The neural network gets no information about the rules of chess, so it is necessary to filter
 out the illegal moves. 
@@ -801,7 +827,7 @@ out the illegal moves.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{img/output-planes/unfiltered.png}
-    \caption{A subset of the 73 8x8 planes from the policy output. The brighter the pixel, the better the move. Grey padding was added to make a better visual presentation of the output planes.}
+    \caption{A subset of the 73 8x8 planes from the policy output. The brighter the pixel, the better the move.}
 \end{figure}
 
 \begin{figure}[H]
@@ -816,11 +842,14 @@ looks like this:
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{img/output-planes/random-model-unfiltered.png}
-    \caption{Some output planes from an untrained model. Black padding was used instead of gray to make it clearer.}
+    \caption{Some output planes from an untrained model.}
 \end{figure}
 
-This shows it is clear the trained model has some understanding of which moves are legal, 
-without giving it any knowledge of the rules of chess. 
+(Black padding was used instead of gray to make it clearer.)
+
+This clearly shows the trained model has at least some level of understanding of which moves are legal, 
+without giving it any knowledge about the rules of chess. The model isn't even told we're playing chess: it
+learns the correct outputs completely on its own. 
 
 \subsubsection{The evaluation step}
 
@@ -1064,6 +1093,10 @@ This will create one server and the amount of clients that is configured in the 
 That file can also be used as a reference to deploy a Kubernetes cluster for parallel self-play with 
 high scalability and reliability. 
 
+Using the created GUI, it is possible to visualize the self-play of all these boards in real-time.
+This can be done by settings the ``SELFPLAY\_SHOW\_BOARD'' environment variable in docker-compose.yml to ``true''.
+For every replica of the client, a new PyGame window will open where the board will change in real-time. 
+
 You can also manually run self-play or create data using puzzles:
 
 \begin{minted}{text}
@@ -1164,7 +1197,7 @@ I have also asked questions to the following online communities:
 \begin{itemize}
     \item The AI Stack Exchange community % TODO: link
     \item The Leela Chess Zero Discord community 
-    \item % TODO: The TalkChess forum, a forum affiliated with The Chess Programming Wiki
+    \item The TalkChess forum, a forum affiliated with The Computer Chess Club (CCC)
 \end{itemize}
 
 \subsection{Strengths and weaknesses}
@@ -1269,9 +1302,13 @@ learning algorithms other than AlphaZero:
     \item SARSA
     \item DQN
     \item Actor-Critic methods like A2C or A3C
+    \item \dots
 \end{itemize}
 
-
+Currently, sending inputs from the client to the server for predicting outputs with 
+the neural network happens through Python sockets. A good alternative for that is gRPC. 
+It would allow the clients to directly call a method on the server without having to 
+resort to Python sockets, which might be slower. \cite{IntroductionGRPC}
 
 \subsection{Is there a socio-economic impact present?}
 
@@ -1312,8 +1349,7 @@ in both academia and industry \cite{DeepReinforcementLearning2022a}.
 For this project specifically, there is still a lot of research opportunity to try to solve the problem
 of creating a large enough dataset to train a sufficiently powerful model.
 
-
-
+% TODO: expand this section
 
 
 
@@ -1342,8 +1378,9 @@ When you want to implement AlphaZero or similar algorithms, it is recommended to
 prioritize writing code in the most efficient way possible. Every step of the algorithm
 should be programmed with multiprocessing and multithreading in mind. Furthermore,
 the choice of programming language should be considered carefully. While most AI 
-frameworks are primarily written in Python, the language just isn't fast enough for
-something that needs this much data through self-play. 
+frameworks are primarily written for use in Python, and most documentation is written
+for Python, the language just isn't fast enough for something that needs this much data through self-play. 
+C++ would be a better choice.
 
 As was apparent from the results of the research project, generating training data 
 takes a very long time. A good solution to this problem is to first pretrain the model
@@ -1354,6 +1391,52 @@ idea on what decisions to make based on the data it was given in pretraining.
 
 % TODO
 
+\subsection{Tips when programming a similar application}
+
+This section will give some useful tips for programming an application that uses
+AlphaZero's MCTS algorithm. 
+
+\subsubsection{Creating the tree data structure}
+
+The MCTS algorithm requires a tree to be constructed. As mentioned before, the nodes of the tree
+are the positions of the game, and the edges between those nodes are the actions that can be taken
+from those positions. 
+
+It is important to avoid memory management issues when creating the tree. The MCTS algorithm 
+can create quite large trees, especially when using hundreds of simulations. Every node object
+should therefore only include the necessary data. For example, a very early version of my MCTS algorithm 
+included all previous moves of the game in every node, creating a huge memory leak. This was fixed
+by only storing the current board state as a FEN string in each node.
+
+\subsubsection{Programming the MCTS algorithm}
+
+When programming the MCTS algorithm, it is crucial to make every step as efficient as possible.
+In the expansion step of the algorithm, the state of the leaf node should be converted to an object
+that can be used as an input in the neural network. The function that converts the leaf's state 
+can be very slow if it's not programmed efficiently. As that function needs to be called for every
+simulation, every line of code should be optimized for speed.
+
+Calling the neural network is definitely the slowest step of the algorithm. A good way to take 
+advantage of this is to send batches of data to the network instead of one input at a time. 
+This can be done by creating multiple threads to ``crawl'' through the tree at the same time 
+during the selection step of the algorithm. 
+Once every thread has finished by finding a leaf node, every leaf node can be sent to the network at once. 
+For every output received by the neural network, a thread can again be started for the third and fourth steps. 
+This will result in a significant speedup. 
+The difficulty of programming this is mainly making sure the ``crawlers'' during the selection step
+don't all select the same nodes. That would result in a less explored MCTS tree.
+
+\subsubsection{Choosing the right input for the neural network}
+
+As mentioned in the technical research part of this thesis, I opted for a smaller input
+shape than the one defined in AlphaZero's paper. This is because I wanted to make the 
+neural network as fast as possible. 
+
+You should carefully consider what data the neural network would need to make a decision, 
+based on the problem you're trying to solve. For example: when Google used AlphaGo to make
+their data center's temperature control more efficient, they opted to use the sensors in the
+data center as inputs to the neural network. 
+You should make sure to omit any unnecessary data from the input.
 
 %%%%% Conclusion %%%%%
 \newpage
