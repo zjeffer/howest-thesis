@@ -1322,7 +1322,7 @@ problem-solving systems, known as artificial general intelligence (AGI).'' \cite
 This is a slow and extremely difficult process, but DeepMind is confident AlphaZero and 
 its variants are a big step towards that goal \cite{AlphaZeroSheddingNew}.
 
-Others are more pessimistic about the progress DeepMind has made \cite{emailmoerlandEmailExchangeTuur22, dukezhouAnswerAlphaZeroExample2018},
+Others are more pessimistic about the progress DeepMind has made \cite{moerlandEmailExchangeTuur22, dukezhouAnswerAlphaZeroExample2018},
 explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective games, 
 this does not mean their results a particularly big step towards AGI. 
 
@@ -1478,8 +1478,158 @@ but also supervised learning techniques if training data is available.
 \newpage
 \section{Appendix}
 
+\subsection{Report guest speaker: ML6}
+
+\subsubsection{Introduction}
+
+On the 20th of January, I attended a very interesting talk by Matthias Feys, 
+CTO of ML6. ML6 is an AI consultancy company based in Belgium, Germany, The Netherlands 
+and Switzerland that serves customers across Europe. They have more than 90 
+machine learning \& data engineering experts and are the largest and fastest 
+growing AI company in Europe. 
+
+The talk was about how the company tries to increase the explainability of their AI 
+solutions. 
+
+\subsubsection{What is Explainable AI?}
+
+The inner workings of how an AI gets to a decision is often very difficult to explain.
+Say you have some inputs and a neural network that takes those inputs and produces
+one output: Yes or No. Without explainability, you can't tell the customer why the 
+network makes the decision. The customer just has to take your word for it.
+
+An improvement to the above example is instead of outputting a boolean value, 
+a percentage could be used instead. This would allow the customer to understand
+how sure the network is of its decision.
+
+While AI technology is improving extremely quickly, adoption of these technologies
+by other companies is often still a hurdle to overcome. Here are three scenarios in 
+which Explainable AI can drive adoption. All of these scenarios have the goal of
+building trust in the AI.
+
+\begin{enumerate}
+    \item AI is weaker than human
+    \item AI is on par with human
+    \item AI is stronger than human
+\end{enumerate}
+
+\subsubsection{AI is weaker than human}
+
+In this scenario, adoption is very difficult, which is why explainability
+will be primarily about improving the AI. By explaining how the AI makes a decision,
+the customer can understand how they can help improve it. 
+
+You can visualize the outputs of a model. For example: drawing lines and bounding 
+boxes around the output of a neural network is a great way to show what the 
+contribution of the model is.
+
+You can improve the model by capturing lots of data, and either letting the customer label
+the data themselves, or by fixing incorrect labels. This is called Active Learning, and it
+focuses on the data where the model is weak. 
+While waiting for a model to improve, you can manually create a simpler model that can
+solve the specific edge case that went wrong before.
+
+\subsubsection{AI is on par with human}
+
+When the AI is as good as the human counterpart, you want to build trust in the
+AI by discussing how it works. It's difficult to convince someone to consider 
+using the AI over the human solution if they are equally valid options. 
+
+In this scenario, explainability can help humans to use the result of the AI 
+to their advantage. You're basically letting the AI and the human work together
+to solve a problem.
 
 
+\subsubsection{AI is stronger than human}
+
+Stronger than human performance is great, but it's better if you can also explain
+why it's the better option. Explainability here is about explaining a complicated
+concept and informing humans.
+
+The information you can learn from an AI is incredibly useful to companies in order
+to improve their machines, processes, and products. 
+
+\subsubsection{Five generic design patterns}
+
+Here are 5 tips that are useful for explaining AI.
+
+\begin{enumerate}
+    \item Problem reframing
+    \item Interpretable models
+    \item Feature attribution
+    \item Transparency \& transferability
+    \item Intuitive visualizations
+\end{enumerate}
+
+\textbf{Problem reframing}
+
+It's often better to completely reframe the problem before you start to think about
+programming an AI to solve it. For example: when a customer asks to classify whether
+a car is damaged or not, you can reframe the problem as an object detection problem.
+An object detector can then be trained to detect specific locations of damage on the car.
+This still answers the customer's initial needs, but is much easier to explain.
+
+\textbf{Interpretable models}
+
+Some models are generally more interpretable than others. Linear models, for example,
+can be very easy to interpret, but these aren't very performant. LSTMs on the other hand,
+can be very performant, but they are hard to interpret. It's crucial to find a correct
+balance between both performance and interpretability. AI architectures can be combined
+to solve a problem in a way that is both performant and easy to understand.
+
+\textbf{Feature attribution}
+
+It's important to understand which features are contributing the most or the least 
+to the output of the model. For example: if you have a model that recommends a product,
+you can show which features were had the most impact when recommending that specific product.
+This can be done with techniques like SHAP values, saliency maps or LIME.
+
+\textbf{Transparency \& transferability}
+
+If the data changes drastically, for example due to a crisis like the coronavirus, the model might not be relevant anymore.
+If a model uses another model, it is important that the first model is explainable as well. 
+Validation of data is also very important: if the data is filled with mistakes, 
+the output can not be trusted. That is why it's necessary to run a standard set of checks
+on the data to uphold the quality of the dataset.
+
+\textbf{Intuitive visualizations}
+
+For example, when a model recommends a product, a visual representation can be shown of 
+other products that are similar to the recommended product, from most similar to least similar.
+This gives the customer a good sense of how it ranks products to your preferences.
+
+For computer vision, saliency maps can show the importance of each pixel in the image when 
+making a decision.
+
+\subsubsection{Conclusion}
+
+The main conclusion of the talk was that explainable AI is not just about using SHAP to explain
+the features, but it is about much more than that.
+Explainability is not just part of developing a model, 
+it is present in the whole pipeline from start to finish: it starts with the framing of the problem
+and ends with the user interface and user experience.
+
+The goal is to increase trust and adoption.
+
+\subsubsection{Critical reflection}
+
+I thought it was a very interesting talk about a problem that isn't always given adequate 
+attention in the AI community. It is also something I am personally guilty of: when developing
+an AI, explainability is one of the last things I think of, when it should be part of the 
+developing process from the start. For example, my bachelor thesis about creating a chess engine using deep reinforcement learning
+is a project where almost no explainability is possible. This makes developing the AI 
+very difficult, as it's not clear why the model makes its decisions. 
+
+I was particularly intrigued by the way saliency maps can be used to explain the importance
+of groups of pixels in an image [1]. This way, mistakes that a model makes can be easily visualized:
+if a group of pixels is deemed as important by the model, but it's a false positive, actions can 
+be taken to improve the model based on that edge case.
+
+
+\subsubsection{Sources}
+
+[1] ``Saliency map'' Wikipedia, Oct. 2021. [Online]. Available: https://en.wikipedia.org/w/index.
+php?title=Saliency\_map\&oldid=1049691575 (visited on 04/16/2022)
 
 
 \end{document}
