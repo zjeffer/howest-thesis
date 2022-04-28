@@ -32,3 +32,5 @@ TalkChess
 gRPC
 LSTMs
 SHAP
+Vandecaveye
+dotOcean
