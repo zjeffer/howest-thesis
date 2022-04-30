@@ -217,12 +217,14 @@ It explains what went wrong and how to fix it.
 \section*{List of abbreviations}
 \addcontentsline{toc}{section}{List of abbreviations}
 
-
+% TODO
 
 %%%%% Glossary %%%%%
 \newpage
 \section*{Glossary}
 \addcontentsline{toc}{section}{Glossary}
+
+% TODO
 
 %%%%% Introduction %%%%%
 \newpage
@@ -245,17 +247,21 @@ It explains what went wrong and how to fix it.
 % - De methode die in deze studie gebruikt is, is een gemengde aanpak gebaseerd op...
 
 Chess is not only one of the oldest and most popular board games in the world, it is also a breeding ground for
-complex algorithms and more recently, machine learning. Chess is theoretically a deterministic game: 
+complex algorithms, and more recently, machine learning. Chess is theoretically a deterministic game: 
 no information is hidden from either player and every position has a calculable set of possible moves.
+It is not a ``solved'' game: the outcome of any position can not always be correctly predicted, only estimated. 
 Because the branching factor of chess is about 35-38 moves \cite{BranchingFactorChessprogramming}, 
-meaning that in every position an average of 35-38 moves are possible, 
-calculating if a position is winning or losing requires an enormous amount of calculations.
+meaning that in every position an average of 35-38 actions are possible, 
+this estimation requires an enormous amount of calculations.
 
 Throughout the entire history of computer science, researchers have continuously tried to find better
 ways to calculate if a position is winning or losing. The most famous example is the StockFish 
 engine \cite{StockfishChess2022}, which uses the minimax algorithm with alpha-beta pruning to calculate the best move.
 
 Recently, researchers at Google DeepMind have developed a new algorithm called AlphaZero \cite{AlphaZero2022}.
+AlphaZero was made using deep reinforcement learning, by playing millions of games against itself and 
+using those games as training data for the neural network. With help from Google's AI-specialised hardware,
+AlphaZero managed to play chess better than StockFish after only four hours of training.
 This thesis explores the concept of AlphaZero, how to create a chess engine based on it, and the impact of 
 the algorithm on both the world of chess and the rest of society.
 
@@ -446,7 +452,7 @@ Do not confuse this with the third step of the algorithm, which is also called \
         \item If the selected leaf node is a terminal node (the game ends), proceed to the backpropagation step.
         \item If it doesn't, create a child node for every possible action that can be taken from the selected node.
     \end{itemize}
-    \item \textbf{Simulation}:
+    \item \textbf{Simulation / Rollout}:
     \begin{itemize}
         \item Choose a random child node that was expanded in the previous step.
         \item By only choosing random moves, simulate the rest of the game from that child node's position.
@@ -993,6 +999,33 @@ It's clear the model manages to learn something at the start of the training ses
 but seems to plateau after 150 batches. Because the first training session started from 
 a random model, it managed to learn a lot more before reaching a plateau after around 600 batches.
 
+\subsubsection{Subsequent training sessions}
+
+In further training sessions, some improvements were made to make it easier for the model to learn.
+Previously, when the game ended in a draw, the data was assigned a label of 0. 
+Because playing semi-random moves often doesn't end in a win for either player (due to the move limit), 
+this caused the dataset to consist of mainly draws. DeepMind could use a much higher move limit, 
+because they had the hardware to play moves a lot faster.
+
+To mitigate this problem as much as possible, without having to raise the move limit, 
+the data was not always assigned 0 when a draw occurred. Instead, actions in 
+drawn games were assigned 0.25 when white has a big advantage at the end of the game, and -0.25 
+when black has the advantage. This advantage was determined by the pieces left on the board
+after the game ended. Every piece gets a value based on its type, with stronger pieces getting 
+higher values:
+
+\begin{itemize}
+    \item Pawns: 1
+    \item Knights \& Bishops: 3
+    \item Rooks: 5
+    \item Queen: 9
+\end{itemize}
+
+% TODO: If the difference in scores between players is greater than 5, 
+
+
+
+
 \subsection{Multiprocessing}
 
 Because self-play is very time-consuming, there needed to be a way to play multiple games in parallel 
@@ -1342,10 +1375,10 @@ learning algorithms other than AlphaZero:
     \item \dots
 \end{itemize}
 
-Currently, sending inputs from the client to the server for predicting outputs with 
-the neural network happens through Python sockets. A good alternative for that is gRPC. 
-It would allow the clients to directly call a method on the server without having to 
-resort to Python sockets, which might be slower. \cite{IntroductionGRPC}
+Currently, sending inputs from the client to the server for inference
+happens through Python sockets. A good alternative for that is gRPC \cite{IntroductionGRPC}. 
+gRPC would allow the clients to directly call a method on the server without having to 
+resort to Python sockets, which might be slower. 
 
 \subsection{Is there a socio-economic impact present?}
 
@@ -1363,6 +1396,8 @@ Others are more pessimistic about the progress DeepMind has made \cite{moerlandE
 explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective games, 
 this does not mean their results a particularly big step towards AGI. 
 
+Dr. Thomas Moerland had this to say:
+
 \begin{quotation}
     I think there is a huge gap between the simple games we now solve and the 
     'artificial general intelligence' that DeepMind is trying to achieve.
@@ -1372,6 +1407,7 @@ this does not mean their results a particularly big step towards AGI.
     Just like the millions of years of evolution our brains have been through, our brains
     have been gathering data non-stop throughout our lives. \cite{moerlandEmailExchangeTuur22}
 \end{quotation}
+
 
 
 \subsection{Is there opportunity for further research?}
@@ -1530,7 +1566,7 @@ solutions.
 
 \subsubsection{What is Explainable AI?}
 
-The inner workings of how an AI gets to a decision is often very difficult to explain.
+The inner workings of how an AI gets to a certain decision is often very difficult to explain.
 Say you have some inputs and a neural network that takes those inputs and produces
 one output: Yes or No. Without explainability, you can't tell the customer why the 
 network makes the decision. The customer just has to take your word for it.

@@ -19,3 +19,4 @@
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QOn the 20th of January, I attended a very interesting talk by Matthias Feys, CTO of ML6.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThis can be done with techniques like SHAP values or LIME.\\E$"}
 {"rule":"CD_NN","sentence":"^\\Q8 possible knight moves 9 special “underpromotion” moves: If a pawn is promoted to a queen, it is counted as a queen-like move (see above) If a pawn is promoted to a rook, bishop, or knight, it is seen as an underpromotion (3 pieces) 3 ways to promote: pushing the pawn up to the final rank, or diagonally taking a piece and landing on the final rank \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"SENT_START_CONJUNCTIVE_LINKING_ADVERB_COMMA","sentence":"^\\QFurther training sessions.\\E$"}

@@ -34,3 +34,4 @@ LSTMs
 SHAP
 Vandecaveye
 dotOcean
+AI-specialised
