@@ -35,3 +35,6 @@ SHAP
 Vandecaveye
 dotOcean
 AI-specialised
+DotA
+non-multiprocessed
+multiprocessed

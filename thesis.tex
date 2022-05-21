@@ -24,6 +24,11 @@
 \usepackage{enumitem}
 \usepackage{changepage}
 
+\usepackage{adjustbox}
+\usepackage{tabularx,ragged2e,booktabs}
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
+
+
 \usepackage{bookmark}
 \usepackage{csquotes}
 \usepackage[style=ieee]{biblatex}
@@ -69,7 +74,7 @@
     \begin{figure}[H]
         %%%%% Change the cover image here %%%%%
         \centering
-        \includegraphics[width=18.5cm,height=18.5cm]{img/cover.png}
+        \includegraphics[width=18.5cm,height=18.5cm]{img/titlepage-cover.png}
         \caption{Image source: Rosenbloom, Lois {\cite{rosenbloomTopDogAlphaZero2019}}}
     \end{figure}
     \begin{adjustwidth}{1.5cm}{1.5cm}
@@ -114,9 +119,9 @@
 \section*{Preface}
 \addcontentsline{toc}{section}{Preface}
 
-This bachelor thesis is the conclusion to the bachelor program Multimedia \& Creative Technologies at Howest college
+This bachelor thesis is the conclusion to the bachelor's program Multimedia \& Creative Technologies at Howest College
 West Flanders in Kortrijk, Belgium. The program teaches students a wide range of skills in the field of 
-computer science, with a focus on creativity and Internet of Things. From the second year on, students can choose 
+computer science, with a focus on creativity and the Internet of Things. From the second year on, students can choose 
 between four different modules:
 
 \begin{enumerate}
@@ -127,23 +132,24 @@ between four different modules:
 \end{enumerate}
 
 This bachelor thesis was made under the \textbf{AI Engineer} module.
-The subject of the thesis is a critical look at the result of my research project 
+The subject of the thesis is a critical look at the results of my research project 
 in the previous semester. The goal of the project was to create a chess engine in Python with
 deep reinforcement learning based on DeepMind's AlphaZero algorithm. 
+As I have been playing chess for most of my life, I was naturally very interested in the workings of AlphaZero
+and why it played so well against the more conventional `StockFish' engine. 
 
-I will explain the research I needed to create it, the technical details on how I programmed the
+I will explain the research I needed to create it, the technical details of how I programmed the
 chess engine and I will reflect on the results of the project. To do this, I will contact 
 multiple people and communities familiar with the field of reinforcement learning to get a better understanding of the
-impact of this research on society. Based on this, I will give advice to people and companies who 
+impact of this research on society. Based on this, I will advise people and companies who 
 wish to implement similar algorithms.
 
-I would like to show gratitude to Wouter Gevaert for his enthusiastic support in the creation of my research project 
-and this thesis. I also want to thank the other teachers at Howest Kortrijk, who shared their knowledge
-and expertise in programming and AI in very interesting classes.
+I would like to thank Wouter Gevaert for his enthusiastic support in the creation of my research project 
+and this thesis. I also want to thank the other teachers at Howest Kortrijk, who enthusiastically shared their knowledge
+and expertise in programming and AI.
 
 Furthermore, I'm grateful to my external promotor, Tom Vandecaveye, who has agreed to read and grade
-this thesis as an unbiased party. Tom is an employee of dotOcean, the company I did my
-internship in at Howest.
+this thesis as an unbiased party. Mr. Vandecaveye is an employee of dotOcean, where I did my internship.
 
 Finally, I would like to thank my parents for giving me the chance to have a good education, and 
 the motivation to get the best I can out of my studies.
@@ -168,27 +174,28 @@ the motivation to get the best I can out of my studies.
 % Je beantwoordt in de samenvatting kort en bondig een viertal vragen: 
 % X Wat is de onderzoeksvraag?
 % X Wat was jouw onderzoek? 
-% - Welke elementen spelen een grote rol (zowel positief als negatief) bij de evaluatie van het onderzoek? 
-% - Welke elementen zijn belangrijk bij jouw advies?
-% - Het besluit wordt kort samengevat
+% X Welke elementen spelen een grote rol (zowel positief als negatief) bij de evaluatie van het onderzoek? 
+% X Welke elementen zijn belangrijk bij jouw advies?
+% X Het besluit wordt kort samengevat
 
-This bachelor thesis answers the question: ``How to create a chess engine using deep reinforcement learning?''.
-It explains the difference between normal chess engines and chess engines that use deep reinforcement learning, and
+This bachelor thesis answers the question: `How to create a chess engine using deep reinforcement learning?'.
+It explains the differences between conventional chess engines and chess engines that use deep reinforcement learning, and
 specifically tries to recreate the results of AlphaZero, the chess engine by DeepMind, in Python on consumer hardware. 
 
-The technical research shows what is needed to create my implementation using Python and TensorFlow. 
+The technical research shows what was needed to create my implementation using Python and TensorFlow. 
 It shows how to program the chess engine, how to build the neural network, and how to train and evaluate the network.
-During the creation of this chess engine, it was crucial to create a huge amount of data through self-play.
-
-% TODO: abstract volledig herschrijven vanaf hier
+During the creation of this chess engine, it was crucial to create an enormous amount of data through self-play.
+This plays a big role in the critical evaluation of the project. 
 
 The thesis contains a reflection on the results of my research project, which proposes a solution to the problem of
-creating a high amount of games through self-play. It also reflects on the impact of this research on society, and the
-viability of this type of artificial intelligence in the future. It follows with advice to people and companies who wish to implement similar algorithms. 
+having to create a high number of games through self-play. It also reflects on the impact of this research on society, and the
+viability of this type of artificial intelligence in the future. 
+It follows with advice to people and companies who wish to implement similar algorithms, warning that while this type of 
+algorithm can be applied to solve many problems, the computational power necessary to successfully implement it are very high. 
 
-% TODO: CONCLUSION
 Finally, the conclusion offers a definitive answer to the research question, based on the previous sections.
-It explains what went wrong and how to fix it. 
+It explains that it is definitely possible to create a chess engine with deep reinforcement learning, as proven by DeepMind,
+but it is almost impossible to do so on consumer hardware. 
 
 \newpage
 \thispagestyle{empty}
@@ -206,7 +213,6 @@ It explains what went wrong and how to fix it.
 \renewcommand{\listfigurename}{}
 \listoffigures
 
-% TODO: Remove if no tables
 \section*{List of tables}
 \addcontentsline{toc}{section}{List of tables}
 \renewcommand{\listtablename}{}
@@ -217,7 +223,51 @@ It explains what went wrong and how to fix it.
 \section*{List of abbreviations}
 \addcontentsline{toc}{section}{List of abbreviations}
 
-% TODO
+
+
+\begin{table}[h!]
+    \begin{tabularx}{\textwidth}{@{}LL@{}}
+    \toprule
+    \multicolumn{1}{c}{\textbf{Abbreviation}} & \multicolumn{1}{c}{\textbf{Explanation}} \\ 
+    \midrule 
+    A2C & Advantage Actor-Critic Algorithm \\ \addlinespace
+    A3C & Asynchronous Advantage Actor-Critic Algorithm \\ \addlinespace
+    AGI & Artificial General Intelligence \\ \addlinespace
+    AI & Artificial Intelligence  \\ \addlinespace 
+    ASIC & Application-specific Integrated Circuit \\ \addlinespace
+    CCC & The Computer Chess Club \\ \addlinespace
+    CPU & Central Processing Unit \\ \addlinespace
+    CTO & Chief Technology Officer \\ \addlinespace
+    DQN & Deep Q-Network \\ \addlinespace
+    FEN & Forsyth-Edwards Notation \\ \addlinespace
+    GB & Gigabyte \\ \addlinespace
+    GCP & Google Cloud Platform \\ \addlinespace
+    GPU & Graphics Processing Unit \\ \addlinespace
+    gRPC & Google Remote Procedure Call \\ \addlinespace
+    GUI & Graphical User Interface \\ \addlinespace
+    IoT & Internet of Things \\ \addlinespace
+    lc0 & Leela Chess Zero \\ \addlinespace
+    LIME & Local Interpretable Model-Agnostic Explanations \\ \addlinespace
+    LSTM & Long Short-Term Memory \\ \addlinespace
+    MCTS & Monte Carlo Tree Search \\ \addlinespace
+    NN & Neural Network \\ \addlinespace
+    PGN & Portable Game Notation \\ \addlinespace
+    RAM & Random Access Memory \\ \addlinespace
+    ReLU & Rectified Linear Unit \\ \addlinespace
+    SARSA & State-Action-Reward-State-Action \\ \addlinespace
+    SHAP & Shapley Value \\ \addlinespace
+    SVG & Scalable Vector Graphics \\ \addlinespace
+    TPU & Tensor Processing Unit \\ \addlinespace
+    UCB & Upper Confidence Bound \\ \addlinespace
+    VRAM & Video RAM \\ \addlinespace
+    XR & Extended Reality \\ \addlinespace
+    \bottomrule
+    \end{tabularx} 
+\end{table}
+
+% TODO: aanvullen
+% TODO: odd & even row colors
+
 
 %%%%% Glossary %%%%%
 \newpage
@@ -247,15 +297,15 @@ It explains what went wrong and how to fix it.
 % - De methode die in deze studie gebruikt is, is een gemengde aanpak gebaseerd op...
 
 Chess is not only one of the oldest and most popular board games in the world, it is also a breeding ground for
-complex algorithms, and more recently, machine learning. Chess is theoretically a deterministic game: 
+complex algorithms, and more recently, machine learning. Chess is theoretically a deterministic game, i.e.
 no information is hidden from either player and every position has a calculable set of possible moves.
-It is not a ``solved'' game: the outcome of any position can not always be correctly predicted, only estimated. 
-Because the branching factor of chess is about 35-38 moves \cite{BranchingFactorChessprogramming}, 
-meaning that in every position an average of 35-38 actions are possible, 
-this estimation requires an enormous amount of calculations.
+It is not a `solved' game, which means the outcome of any position can not always be correctly predicted, only estimated. 
+Because the branching factor of chess is about 35 to 38 moves \cite{BranchingFactorChessprogramming}, 
+meaning that in every position an average of 35 to 38 actions are possible, 
+this estimation requires an enormous number of calculations.
 
 Throughout the entire history of computer science, researchers have continuously tried to find better
-ways to calculate if a position is winning or losing. The most famous example is the StockFish 
+ways to calculate whether a position is winning or losing. The most famous example is the StockFish 
 engine \cite{StockfishChess2022}, which uses the minimax algorithm with alpha-beta pruning to calculate the best move.
 
 Recently, researchers at Google DeepMind have developed a new algorithm called AlphaZero \cite{AlphaZero2022}.
@@ -263,17 +313,15 @@ AlphaZero was made using deep reinforcement learning, by playing millions of gam
 using those games as training data for the neural network. With help from Google's AI-specialised hardware,
 AlphaZero managed to play chess better than StockFish after only four hours of training.
 This thesis explores the concept of AlphaZero, how to create a chess engine based on it, and the impact of 
-the algorithm on both the world of chess and the rest of society.
+the algorithm on both the world of chess and beyond.
 
 Research has been conducted by investigating what is needed to recreate the results of AlphaZero
 by programming a simple implementation using Python and TensorFlow Keras. This was done as part of a research project
 between November 2021 and February 2022. The code was written with lots of trial and error, as DeepMind released 
 very little information about the detailed workings of the algorithm. It also only released a simple version of 
 the algorithm in pseudocode, so it isn't possible to directly compare AlphaZero with other chess engines.
-
-As I have been playing chess for most of my life, I was naturally very interested in the workings of AlphaZero
-and why it worked so well against the StockFish engine. Because AlphaZero was trained on supercomputers, 
-I wanted to investigate where its flaws lie when implementing it in Python on consumer hardware.
+Because AlphaZero was trained on supercomputers, I wanted to investigate where its flaws lie by 
+implementing it in Python on consumer hardware.
 
 
 %%%%% Add Howest background %%%%%
@@ -304,26 +352,93 @@ I wanted to investigate where its flaws lie when implementing it in Python on co
 %
 %%%%%%%%%%%%%
 
-\subsection{What is a chess engine?}
+\subsection{Chess}
+
+Chess is a two-player strategy board game \cite{Chess2022a}. The game is played on square board of 64 squares arranged in an eight-by-eight grid, 
+with sixteen pieces for each player. One player plays the white pieces, and the other plays the black pieces.
+There are six types of pieces in chess: pawns, rooks, knights, bishops, queens, and kings. Every player gets eight pawns,
+two rooks, two knights, two bishops, one queen and one king. Every one of these pieces has a specific set of possible actions. 
+
+Pieces can be captured by the opponents pieces, after which the captured piece will be removed from the board, and the opponent's piece
+will be placed at the captured piece's position. The goal of the game is to checkmate the opponent.
+
+\subsubsection{Game setup}
+
+At the start of a chess game, the pieces are placed on the board in the following positions:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/chess-initial.png}
+    \caption{Chessboard at the start of the game \cite{ChessBoardEditor}}
+\end{figure}
+
+From the bottom left: rook, knight, bishop, queen, king, bishop, knight, rook.
+The second row is filled with 8 pawns. The opponent places the same pieces on the other side of the board.
+In chess variants like Fischer random chess, the pieces on the first and last rows are shuffled randomly \cite{FischerRandomChess2022}.
+
+\subsubsection{Movement}
+
+Pawns can normally only move forward one square at a time, but if the pawn is in its initial position, the player can choose to move them two squares forward.
+To capture pieces, pawns must take diagonally. It can only do this when an opponent's piece is diagonally one square removed from the pawn.
+When a pawn reaches the other side of the board, it can choose to `promote' itself to a queen, rook, bishop, or knight, i.e. the pawn is 
+replaced by the chosen piece. `En passant' is a special pawn move that is only possible when the player moves a pawn two squares forward. 
+If the pawn is then adjacent to one of the opponent's pawns, the opponent can choose to capture that pawn as if it had only moved one square forward.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{img/en-passant.png}
+    \caption{En passant: the black pawn can capture the adjacent white pawn, because it moved two squares}
+\end{figure}
+
+The rook can move any number of squares vertically or horizontally, given there are no pieces blocking its way.
+The bishop can do the same, but diagonally. The queen is a combination of the rook and bishop: it can move vertically, diagonally, and horizontally.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.32\textwidth]{img/rook.png}
+    \includegraphics[width=0.32\textwidth]{img/bishop.png}
+    \includegraphics[width=0.32\textwidth]{img/queen.png}
+    \caption{Rook, bishop and queen moves}
+\end{figure}
+
+
+The knight moves in an L-shape: a knight move consists of moving one square vertically, and two horizontally, or vice versa.
+The knight is the only chess piece that can leap over other pieces.
+
+The king can move just like the queen, but only one square at a time.
+
+
+\subsubsection{Check and checkmate}
+
+Attacking the king is called a `check'. When this happens, the opponent must either move the king out of the way, or
+stop the attack by capturing the attacking piece or blocking the attack with one of its own pieces. 
+When the player can not stop the attack, the player loses the game. This is called `checkmate'.
+The player can never end their move if their king is in check. This would be an `illegal move'.
+
+When it's the player's turn but have no legal moves available, and they are not checked, the game is drawn.
+This is called `stalemate'.
+
+\subsection{Chess engines}
 
 According to Wikipedia \cite{ChessEngine2022}, a chess engine is a computer program that analyzes 
-chess or chess variant positions, and generates a move or list of moves that it regards as strongest.
+positions in chess or chess variants, and generates a list of moves that it regards as strongest.
 Given any chess position, the engine will estimate the winner of that position based on the strength 
-of the possible future moves up to a certain depth. The strength of a chess engine is determined by
-the amount of moves, both in depth and breadth, that the engine can calculate. 
+of the possible future moves up to a certain depth. The strength of a chess engine is often determined by
+the number of positions, both in depth and breadth, that the engine can evaluate. 
+
+This means that with time, as computational power increases, chess engines will keep getting stronger.
 
 
 \subsection{How do traditional chess engines work?}
 
-Contemporary chess engines, like StockFish \cite{StockfishChess2022}, use a variant of the minimax algorithm that employs alpha-beta pruning.
-
 \subsubsection{The minimax algorithm}
+
+Contemporary chess engines, like StockFish \cite{StockfishChess2022}, use a variant of the minimax algorithm that employs alpha-beta pruning.
 
 The minimax algorithm \cite{Minimax2022} is a general algorithm usable in many applications, ranging from artificial intelligence to 
 decision theory and game theory. The algorithm tries to minimize the maximum amount of loss. In chess, this means 
-that the engine tries to minimize the possibility for the worst-case scenario: the opponent
-checkmating the player. For games where the player needs to maximize a score, the algorithm is called maximin: 
-maximizing the minimum gain. 
+that the engine tries to minimize the possibility for the worst-case scenario, i.e. the opponent checkmating the player. 
+Alternatively, for games where the player needs to maximize a score, the algorithm is called maximin: maximizing the minimum gain. 
 
 Minimax recursively creates a search tree \cite{eppesHowComputerizedChess2019}, with chess positions as nodes and chess moves as edges between the nodes. 
 Each node has a value that represents the strength of the position for the current player. 
@@ -348,14 +463,12 @@ This repeats until the root node receives a value: the strength of the current p
 \subsubsection{The evaluation function}
 
 The value estimation of leaf nodes is done by an evaluation function \cite{EvaluationFunction2022} written specifically
-for the game. This function can differ from engine to engine, and is usually written with 
+for the game. This function can differ from engine to engine, and is usually written with the
 help from chess grandmasters. 
-
-
 
 \subsubsection{Pseudocode}
 
-The algorithm is recursive; it calls itself with different arguments, depending
+The algorithm is recursive, i.e. it calls itself with different arguments, depending
 on which player's turn it is. In chess, white wants to maximize the score, and 
 black wants to minimize it \cite{Minimax2022}. 
 
@@ -386,16 +499,16 @@ minimax(origin, depth, TRUE)
 
 \subsubsection{Alpha-beta pruning}
 
-Because the amount of nodes necessary to get a good estimation of the strength of a position
+Because the number of nodes necessary to get a good estimate of the strength of a position
 is so high, the algorithm needs to be optimized. 
-Alpha-beta pruning \cite{AlphaBetaPruning2022} aims to reduce the amount of nodes that need to be explored by minimax.
+Alpha-beta pruning \cite{AlphaBetaPruning2022} aims to reduce the number of nodes that need to be explored by minimax.
 It does this by cutting off branches in the search tree that lead to worse outcomes.
 
 Say you're playing the white pieces. You want to minimize your maximum loss, which means 
 you want to make sure that black's score is as low as possible. 
 Minimax assumes that the opponent will play the best possible move. If one of white's possible moves
 leads to a position where black gets a big advantage, it will eliminate that branch of the search tree.
-As a result, the amount of nodes to explore is greatly reduced, while retaining a good estimation 
+As a result, the number of nodes to explore is greatly reduced, while retaining an accurate estimate 
 of the strength of the position.
 
 \begin{figure}[H]
@@ -404,10 +517,10 @@ of the strength of the position.
     \caption{Example of alpha-beta pruning in minimax}
 \end{figure}
 
-In the above example: white has a value of 6 in the root node. 
+In the above example, white has a value of 6 in the root node. 
 If white plays the move on the right that leads to a position with a value of 5, 
 the next move black wants to play will be the one that leads to the position 
-with the lowest possible value. Therefore, it obviously will never play the move
+with the lowest possible value. Therefore, it will never play the move
 that leads to the position with a value of 8, as that would be a winning position for
 white. This means that whole branch can be pruned.
 
@@ -426,8 +539,6 @@ because it considers the sacrifice a losing position \cite{MinimaxMonteCarlo}.
 Monte Carlo Tree Search (MCTS) \cite{MonteCarloTree2022} is a search algorithm that can be used to mitigate these problems.
 MCTS approximates the value of a position by creating a search tree using random exploration of the most promising moves.
 
-\subsubsection{The algorithm}
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.98\textwidth]{img/MCTS-steps.png}
@@ -437,44 +548,43 @@ MCTS approximates the value of a position by creating a search tree using random
 To create this search tree for a certain position, MCTS will run the following algorithm hundreds of times, 
 consisting of four steps. 
 Every execution of the algorithm is called an MCTS \textbf{simulation}. 
-Do not confuse this with the third step of the algorithm, which is also called \textit{simulation}. 
+This is not to be confused with the third step of the algorithm, which is also called \textit{simulation}. 
 
-\begin{enumerate}
-    \item \textbf{Selection}:
-    \begin{itemize}
-        \item Starting from the root node, select a child node based on a formula of your choice.
-        \item Most implementations of MCTS use some variant of Upper Confidence Bound (UCB) \cite{MLMonteCarlo2019}
-        \item Keep selecting nodes until a node has been reached that has not been visited (= ``expanded'') before. We call this a leaf node.
-        \item If the root node is a leaf node, we immediately proceed to the next step.
-    \end{itemize}
-    \item \textbf{Expansion}:
-    \begin{itemize}
-        \item If the selected leaf node is a terminal node (the game ends), proceed to the backpropagation step.
-        \item If it doesn't, create a child node for every possible action that can be taken from the selected node.
-    \end{itemize}
-    \item \textbf{Simulation / Rollout}:
-    \begin{itemize}
-        \item Choose a random child node that was expanded in the previous step.
-        \item By only choosing random moves, simulate the rest of the game from that child node's position.
-    \end{itemize}
-    \item \textbf{Backpropagation}:
-    \begin{itemize}
-        \item Return the simulation's result up the tree.
-        \item Every node tracks the number of times it has been visited, and the number of times it has lead to a win.
-    \end{itemize}
-\end{enumerate}
+\subsubsection{Selection}
+
+Starting from the root node, select a child node based on a formula of your choice.
+Most implementations of MCTS use some variant of Upper Confidence Bound (UCB) \cite{MLMonteCarlo2019}
+Keep selecting nodes until a node has been reached that has not been visited (= `expanded') before. We call this a leaf node.
+If the root node is a leaf node, we immediately proceed to the next step.
+
+
+\subsubsection{Expansion}
+
+If the selected leaf node is a terminal node (the game ends), proceed to the backpropagation step.
+When it isn't, create a child node for every possible action that can be taken from the selected node.
+
+
+\subsubsection{Simulation / Rollout}
+
+Choose a random child node that was expanded in the previous step.
+By only choosing random moves, simulate the rest of the game from that child node's position.
+
+\subsubsection{Backpropagation}
+
+Return the simulation's result up the tree.
+Every node tracks the number of times it has been visited, and the number of times it has led to a win.
 
 For chess, this algorithm is very inefficient, because of its necessity to simulate 
 an entire game of chess in the third step of every simulation. 
-Just to calculate the value of one position would need hundreds of these simulations to get a good estimation.
-This is why the selection formula needs to be chosen carefully; it's important to select nodes in a way that
+To calculate the value of only one position, there would need to be hundreds of these simulations to get a good estimation.
+Therefore, the selection formula needs to be chosen carefully since it is important to select nodes in a way that
 balances exploration and exploitation.
 
 \subsection{Go}
 
 Go is a Chinese two-player strategy board game that uses white and black stones as playing pieces \cite{GoGame2022}.
-It is played on a rectangular grid of (usually) 19 by 19 lines. The rules are relatively simple, but due to 
-its extremely large amount of possible actions, Go has been a very popular playground for AI research similarly to chess.
+It is played on a rectangular grid of (usually) nineteen by nineteen lines. The rules are relatively simple, but due to 
+its extremely high dimensional state space, Go has been a very popular playground for AI research similarly to chess.
 Go's much larger branching factor compared to chess makes it very difficult to evaluate a position using 
 traditional methods like minimax with alpha-beta pruning.
 
@@ -493,7 +603,7 @@ The algorithm used a combination of the MCTS algorithm and a deep neural network
 
 AlphaGo was built \cite{AlphaGo, MasteringGameGo}  by first training a neural network with supervised learning by using data from human games.
 The weights of that network were then copied to a new reinforcement learning network. That network was used to 
-create a training set through self-play. By playing against itself and every move recording the current board state, the 
+create a training set through self-play. By playing against itself and with every move recording the current board state, the 
 moves the network considered, and the eventual winner of the game, a training set was created.
 That training set was then used to train the reinforcement learning network. A separate network (the value network) 
 was used to estimate the value of a position. 
@@ -501,16 +611,16 @@ was used to estimate the value of a position.
 \subsubsection{AlphaGo Zero}
 
 Because AlphaGo still used some amateur games to learn from, the next step was creating a version of AlphaGo
-that learns completely from scratch. That's why DeepMind developed AlphaGo Zero \cite{AlphaGoZero2022}.
+that learned completely from scratch. That is why DeepMind developed AlphaGo Zero \cite{AlphaGoZero2022}.
 AlphaGo Zero uses a different kind of network than AlphaGo. Instead of using two separate networks, 
 it will combine the two networks into one with two outputs: a policy output and a value output.
 It's also using different layers: residual layers instead of convolutional layers \cite{MasteringGameZero}. 
 
 \subsection{AlphaZero}
 
-AlphaZero is a generalized version of AlphaGo Zero, created to master the games of chess, shogi (``Japanese chess''), and Go \cite{AlphaZero2022, silverMasteringChessShogi2017a}. 
-For chess, AlphaZero was evaluated against StockFish version 8 by playing 1000 games with 3 hours per player, plus 
-15 seconds per move. It won 155 times, lost 6 times and the remaining games were drawn. 
+AlphaZero is a generalized version of AlphaGo Zero, created to master the games of chess, shogi (`Japanese chess'), and Go \cite{AlphaZero2022, silverMasteringChessShogi2017a}. 
+For chess, AlphaZero was evaluated against StockFish version 8 by playing a thousand games with three hours per player, plus 
+fifteen seconds per move. It won 155 times, lost 6 times and the remaining games were drawn. 
 AlphaZero uses a single neural network with two outputs, just like AlphaGo Zero. 
 
 
@@ -520,10 +630,7 @@ The input to the network represents the state of the game.
 It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
 
 \begin{itemize}
-    \item $N$ is the board size
-    \begin{itemize}
-        \item $N = 8$ in chess.
-    \end{itemize}
+    \item $N$ is the board size ($N = 8$ in chess)
     \item $M$ is the number of different pieces on the board, 
     \begin{itemize}
         \item Two players with six types of pieces each
@@ -531,7 +638,7 @@ It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
         \item For every square: $1$ if the piece is on that square, $0$ if it isn't
         \item $M = 12$ in chess
     \end{itemize}
-    \item $T$ is the amount of previous moves that are used as input, including the current move. 
+    \item $T$ is the number of previous moves that are used as input, including the current move. 
     \begin{itemize}
         \item AlphaZero used $T = 8$ for both chess, shogi, and Go.
         \item This gives the network a certain history to learn from
@@ -540,12 +647,13 @@ It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
     \begin{itemize}
         \item $L = 7$ in chess
         \item $1$ plane to indicate whose turn it is
-        \item $1$ for the total amount of moves played so far
+        \item $1$ for the total number of moves played so far
         \item $4$ for castling legality (both players can castle kingside or queenside under certain conditions)
         \item $1$ to represent a repetition count (in chess, 3 repetitions results in a draw). 
     \end{itemize}
-    \item $\Rightarrow 8 \cdot 8 \cdot (12 \cdot 8 + 7)$. 
 \end{itemize}
+
+$\Rightarrow 8 \cdot 8 \cdot (12 \cdot 8 + 7)$. 
 
 This means that the input to the neural network is composed of 119 8x8 boards of values.
 The $M$ planes that encode the pieces are repeated $T$ times in the input, resulting in 112 boards.
@@ -558,47 +666,44 @@ DeepMind tested multiple neural network architectures for AlphaGo Zero \cite{Neu
 The following parts were used in these networks:
 
 \begin{itemize}
-    \item Convolutional block
-    \begin{itemize}
-        \item A convolution layer
-        \item Batch normalization layer
-        \item ReLu activation function
-    \end{itemize}
-    \item Residual block
-    \begin{itemize}
-        \item This consists of two convolutional blocks, and a skip-connection
-        \item The skip-connection will combine the input of the block to the output of the first two convolutional blocks
-    \end{itemize}
+    \item A convolutional block, which consists of a convolutional layer, followed by a batch normalization layer, activated by ReLU.
+    \item A residual block, which consists of two convolutional blocks and a skip-connection.
 \end{itemize}
 
-These networks were tested by DeepMind during development of AlphaGo Zero \cite{MasteringGameZero}:
+The skip-connection is used to combine the input of the residual block with the output of the previous residual block.
+This is done to avoid the `degradation problem':
 
-\begin{enumerate}
+\begin{quotation}
+    ``When deeper networks are able to start converging, a degradation problem has been exposed: 
+    with the network depth increasing, accuracy gets saturated [...] and then degrades rapidly. 
+    Unexpectedly, such degradation is not caused by overfitting, 
+    and adding more layers to a suitably deep model leads to higher training error'' \cite{heDeepResidualLearning2015}
+\end{quotation}
+
+The following networks were tested by DeepMind during development of AlphaGo Zero \cite{MasteringGameZero}:
+
+\begin{itemize}
     \item \textbf{`dual-res':} a single tower of 20 residual blocks with combined policy and value heads. This is the architecture used in AlphaGo Zero.
     \item \textbf{`sep-res':} two towers of 20 residual blocks each: one with the policy head and one with the value head.
     \item \textbf{`dual-conv':} a single tower of 12 convolutional blocks with combined policy and value heads.
     \item \textbf{`sep-conv':} two towers of 12 convolutional blocks each: one with the policy head and one with the value head. This is the network used in AlphaGo.
-\end{enumerate}
+\end{itemize}
 
 AlphaZero uses the same network architecture as AlphaGo Zero: dual-res.
 
 \subsubsection{Neural network output}
 
-The neural network has two outputs:
-
-\begin{itemize}
-    \item A policy head, which represents a probability distribution over the possible actions.
-    \item A value head, which represents the value of the current position.
-\end{itemize}
+The neural network has two outputs: a policy head, which represents a probability distribution over the possible actions, 
+and a value head, which represents the value of the current position.
 
 While the value head simply outputs a single float value between -1 and 1, the policy head is quite a bit more complicated.
 It outputs a vector of probabilities, one for each possible action in the chosen game. 
 For chess, 73 different types of actions are possible:
 
 \begin{itemize}
-    \item 56 possible types of ``queen-like'' moves: 8 directions to move the piece a distance between 1 and 7 squares.
+    \item 56 possible types of `queen-like' moves: 8 directions to move the piece a distance between 1 and 7 squares.
     \item 8 possible knight moves
-    \item 9 special ``underpromotion'' moves:
+    \item 9 special `underpromotion' moves:
     \begin{itemize}
         \item If a pawn is promoted to a queen, it is counted as a queen-like move (see above)
         \item If a pawn is promoted to a rook, bishop, or knight, it is seen as an underpromotion (3 pieces)
@@ -618,14 +723,14 @@ The result is a $73 \cdot 8 \cdot 8$ vector of probabilities, so $4672$ float va
 \subsection{Training the network}
 
 To train this type of network, it's necessary to create a large dataset. 
-This is done by letting the engine play against itself for a high amount of matches. 
+This is done by letting the engine play against itself for a large number of matches. 
 For every action taken by the agent, data is collected and stored in the training set.
 For complex games like chess, shogi and Go, this training set needs to be huge
-because of the extremely large amount of possible situations.
+because of the extremely large number of possible situations.
 
 \subsubsection{Tensor Processing Units (TPU)}
 
-Because of the requirement to play a high amount of matches against itself, it was necessary to calculate
+Because of the requirement to play a large number of matches against itself, it was necessary to calculate
 MCTS simulations in parallel on as fast as possible hardware. 
 To help with these calculations, DeepMind used Google's newly created Tensor Processing Units (TPU) \cite{TensorProcessingUnit2022}.
 A TPU is an application-specific integrated circuit (ASIC \cite{ApplicationspecificIntegratedCircuit2022}) that is specifically built for machine learning with
@@ -675,16 +780,20 @@ Chess rules and helper functions were implemented using the open-source library 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/class-structure.png}
+    \includegraphics[width=0.45\textwidth]{img/class-structure.png}
     \caption{Basic class structure for the code responsible for playing a game}
 \end{figure}
+
+To play a game, an object of the Game class is created. The game data is stored in an object of the Environment class.
+For every player, the Game class creates an Agent that can interact with the environment. Every agent keeps its own 
+MCTS tree, and has access to the neural network to send inputs to.
 
 \subsubsection{Making one move}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{img/ChessRL-schematic.png}
-    \caption{Pipeline to make one move}
+    \caption{Flowchart: making one move}
 \end{figure}
 
 To make a move, an Agent (white or black) observes the environment: the chessboard.
@@ -699,21 +808,16 @@ the policy and the value, will be used to update the tree.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{img/MCTS-choose-move.png}
-    \caption{Example tree after 400 simulations. N = amount of times the selection step selects that edge}
+    \caption{Example tree after 400 simulations. N = number of times the selection step selects that edge}
 \end{figure}
 
 After the simulations are done, the agent will pick the best move from the tree. 
-It can do this in two ways:
-
-\begin{itemize}
-    \item Deterministically: choosing the most visited move 
-    \item Stochastically: creating a uniform distribution of the visit counts and picking a move from that distribution
-\end{itemize}
+It can do this either deterministically, by simply choosing the most visited move, or stochastically,
+by creating a uniform distribution of the visit counts and picking a move from that distribution.
 
 Stochastic selection is better when creating a training set, as it will result in a more diverse dataset.
 Deterministic selection is better when evaluating with a previous network, or playing against the network competitively. 
 In that case, picking the most visited move is the best choice.
-
 
 \subsection{The neural network}
 
@@ -727,10 +831,10 @@ The neural network architecture is the same as AlphaZero's (see the Research sec
 \subsection{A tree structure with nodes and edges}
 
 As mentioned before, the MCTS algorithm creates a tree structure to represent 
-the possible future states after the current position.
+the possible future states after the current position. The tree consists of nodes (chess positions) 
+and edges (the moves between positions).
 
-Node and Edge classes were written. The Node class represents a position in the game, and
-holds the following data:
+The Node class holds the following data:
 
 \begin{itemize}
     \item The position: a string representation of the board using the Forsyth-Edwards Notation (FEN) \cite{ForsythEdwardsNotation2022}
@@ -767,8 +871,7 @@ create the tree and output it to an SVG file.
     \caption{The four steps in AlphaZero's MCTS algorithm \cite{bodensteinAlphaZero2019}}
 \end{figure}
 
-A class was written to hold an MCTS tree. It holds the agent who created the tree and the
-current position as the root node. 
+A class was written to hold an MCTS tree. It always saves the current position as the root node.
 
 \subsubsection{The selection step}
 
@@ -842,7 +945,7 @@ For example:
     \caption{The input state converted from the above example board}
 \end{figure}
 
-Notice how the last square shows the square were en passant is possible.
+Here, the last square shows the square were en passant is possible.
 Grey padding was added to make a better visual presentation of the output planes.
 
 The neural network will return the policy and the value of the position.
@@ -877,7 +980,7 @@ looks like this:
 (Black padding was used instead of gray to make it clearer.)
 
 This clearly shows the trained model has at least some level of understanding of which moves are legal, 
-without giving it any knowledge about the rules of chess. The model isn't even told we're playing chess: it
+without having been given any knowledge about the rules of chess. The model isn't even told we're playing chess: it
 learns the correct outputs completely on its own. 
 
 \subsubsection{The evaluation step}
@@ -887,7 +990,7 @@ The value received from the neural network is now assigned to the leaf node.
 \subsubsection{The backpropagation step}
 
 The value from the leaf node is now also added to every selected node in the path from the root to the leaf node.
-Concretely, for every selected edge in the path, the following values are changed:
+Concretely, for every edge in the traversed path, the following values are changed:
 
 \begin{itemize}
     \item The edge's input node's visit count is incremented by 1
@@ -905,14 +1008,14 @@ Concretely, for every selected edge in the path, the following values are change
     \caption{The training set consists of: the input state, the move probabilities, and the eventual winner}
 \end{figure}
 
-To improve the performance of the neural network, the algorithm needs to play against itself for a high amount of games.
+To improve the performance of the neural network, the algorithm needs to play against itself for a large number of games.
 Every move is saved to memory in a simple Python list. Once the game is over, the winner is assigned to every move in memory.
 The whole game is then saved to a binary file in NumPy's .npy format. 
 When a new game starts, the memory is cleared.
 
 \subsubsection{Creating a dataset from puzzles}
 
-Because creating the dataset is extremely time-consuming, I came up with the idea to also
+Because creating data is extremely time-consuming, I came up with the idea to also
 create data from chess puzzles. A chess puzzle is a position with one simple goal: find the best move or sequence of moves.
 Lichess.org, the open source chess website, has a huge database of over 2 million of these puzzles publicly available for free \cite{LichessOrgOpen}. 
 These are the most common puzzle categories:
@@ -961,18 +1064,18 @@ The position is used as the input to the neural network. The network's outputs a
 compared to the move probabilities and the winner from the dataset:
 
 \begin{itemize}
-    \item The move probabilities are converted to a 73x8x8 tensor, which is compared with the output of the network
+    \item The move probabilities are converted to a 73x8x8 tensor, which is compared with the output of the network.
     \item The winner is compared with the value output of the network.
 \end{itemize}
 
 The training pipeline employs two separate loss functions. The policy head uses categorical cross-entropy
-and the value head uses mean squared error.
+and the value head uses mean squared error.s
 
 \subsubsection{The first training session}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/first-training.png}
+    \includegraphics[width=0.6\textwidth]{img/plots/first-training.png}
     \caption{First training session}
 \end{figure}
 
@@ -991,7 +1094,7 @@ Due to time constraints, this dataset was only made up of 50,000 positions.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/second-training.png}
+    \includegraphics[width=0.6\textwidth]{img/plots/second-training.png}
     \caption{Second training session}
 \end{figure}
 
@@ -1003,16 +1106,14 @@ a random model, it managed to learn a lot more before reaching a plateau after a
 
 In further training sessions, some improvements were made to make it easier for the model to learn.
 Previously, when the game ended in a draw, the data was assigned a label of 0. 
-Because playing semi-random moves often doesn't end in a win for either player (due to the move limit), 
-this caused the dataset to consist of mainly draws. DeepMind could use a much higher move limit, 
-because they had the hardware to play moves a lot faster.
+Because playing semi-random moves often doesn't end in a win for either player 
+(partly due to the relatively low move limit), this caused the dataset to mainly consist of drawn games. 
+DeepMind could use a much higher move limit, because they had the hardware to play moves a lot faster.
 
-To mitigate this problem as much as possible, without having to raise the move limit, 
-the data was not always assigned 0 when a draw occurred. Instead, actions in 
-drawn games were assigned 0.25 when white has a big advantage at the end of the game, and -0.25 
-when black has the advantage. This advantage was determined by the pieces left on the board
-after the game ended. Every piece gets a value based on its type, with stronger pieces getting 
-higher values:
+To mitigate this problem as much as possible without having to raise the move limit, 
+the data was not always assigned 0 when a draw occurred. Instead, if the game reached the move limit
+without a decided winner, the winner was estimated based on the pieces on the board in the last position. 
+Every piece gets a value based on its type, with stronger pieces getting higher values:
 
 \begin{itemize}
     \item Pawns: 1
@@ -1021,9 +1122,23 @@ higher values:
     \item Queen: 9
 \end{itemize}
 
-% TODO: If the difference in scores between players is greater than 5, 
+If the difference in scores between the two players is 5 or greater, the player with the highest 
+score was assigned the winner. Games where white has a big advantage at the end of the game are 
+given a score of 0.25, while games where black has a big advantage are given a score of -0.25.
+This fixes the problem of having an unbalanced dataset of mostly draws.
+Without this, the model might overfit, resulting in the value output always being 0.
 
+Here are some of the loss graphs of subsequent training sessions:
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{img/plots/loss-2022-04-14_20:31:55.png}
+    \includegraphics[width=0.45\textwidth]{img/plots/loss-2022-04-17_20:06:09.png}
+    \caption{Subsequent training sessions.}
+\end{figure}
+
+Different learning rates were tested, but it did not change much, 
+as there is simply a lack of data to train on.
 
 
 \subsection{Multiprocessing}
@@ -1041,7 +1156,7 @@ on the same system.
 
 Previously, every game was played in its own process, but every agent needed to send predictions to a neural network.
 This resulted in every process creating its own copy of the neural network. This is extremely heavy for the GPU, and
-it's impossible to scale. Due to VRAM limits, only two games could be played in parallel on my system (RTX 3070).
+it's impossible to scale. Due to VRAM limits, only two games could be played in parallel on an RTX 3070.
 
 \subsubsection{With multiprocessing}
 
@@ -1068,28 +1183,28 @@ Here's how one client works:
 This socket communication does have a small overhead in both time and CPU usage, but it's much faster than the previous method
 because it is much more scalable. Here's a comparison of the two methods, with the server running on the first system:
 
-\begin{table}[H]
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccll}
-\cline{1-3}
-\multicolumn{1}{|l|}{}                                  & \multicolumn{1}{c|}{\textbf{No multiprocessing}} & \multicolumn{1}{c|}{\textbf{With multiprocessing (8 games)}} &  &  \\ \cline{1-3}
-\multicolumn{1}{|l|}{\textbf{RTX 3070 + Ryzen 7 5800H}} & \multicolumn{1}{c|}{50 simulations/sec}          & \multicolumn{1}{c|}{30 simulations/sec per game}             &  &  \\ \cline{1-3}
-\multicolumn{1}{|l|}{\textbf{GTX 1050 + i7 7700HQ}}     & \multicolumn{1}{c|}{30 simulations/sec}          & \multicolumn{1}{c|}{15 simulations/sec per game}             &  &  \\ \cline{1-3}
-                                                        & \multicolumn{1}{l}{}                             & \multicolumn{1}{l}{}                                         &  & 
-\end{tabular}%
-}
-\caption{Comparison of multiprocessing and non-multiprocessing self-play}
+\begin{table}[h!]
+    \begin{tabularx}{\textwidth}{@{}Lll@{}}
+    \toprule
+    & \textbf{No multiprocessing} & \textbf{Multiprocessing (8 games)} \\ 
+    \midrule 
+    \textbf{RTX 3070 + Ryzen 7 5800H} & 50 simulations/sec & 30 simulations/sec per game \\ \addlinespace
+    \textbf{GTX 1050 + i7 7700HQ} & 30 simulations/sec & 15 simulations/sec per game \\ \addlinespace
+    
+    \bottomrule
+    \end{tabularx} 
+    \caption{Comparison of non-multiprocessed and multiprocessed self-play}
 \end{table}
 
-With 8 games in parallel on the first system, I managed to get an average speed of $30 \cdot 8 = 240$ simulations per second.
+With eight games in parallel on the first system, I managed to get an average speed of $30 \cdot 8 = 240$ simulations per second.
 The second system is much less powerful and needed to connect over Wi-Fi, but it still managed an average of $120$ simulations per second. 
 
 \subsection{A GUI to play against the engine}
 
-The GUI was based on a GitHub project that someone created for simply visualizing a chessboard with PyGame \cite{adefokunChessboardAhirajustice2022, pygame}.
+The GUI was based on a GitHub project that was created for simply visualizing a chessboard with PyGame \cite{adefokunChessboardAhirajustice2022, pygame}.
 I greatly improved and expanded that project to include a way for the player to interact with the board, play against an engine,
 play against yourself, and more \cite{zjefferChessboardZjeffer2022}. I created a pull request to include my changes in the original author's GitHub project,
-but it was declined due to being due extensive and out-of-scope for the project \cite{adefokunChessboard2022pull}.
+but it was declined due to being too extensive and out-of-scope for the project \cite{adefokunChessboard2022pull}.
 
 Using this code, a GUI class was created for playing against the engine. The player can choose a color and play against
 the engine. Clicking on a piece will highlight its square, clicking on another square will move the piece to that square.
@@ -1146,7 +1261,7 @@ options:
 \end{minted}
 
 This will create a new model with the name <NAME> in the folder <FOLDER>.
-The model parameters (amount of hidden layers, input and output shapes if you want to use the network for a different game, the amount of convolution filters, etc.)
+The model parameters (number of hidden layers, input and output shapes if you want to use the network for a different game, the number of convolution filters, etc.)
 can be changed by editing the config.py file.
 
 \subsubsection{Creating a training set through self-play}
@@ -1158,12 +1273,12 @@ Creating the docker containers:
 docker-compose up --build
 \end{minted}
 
-This will create one server and the amount of clients that is configured in the docker-compose.yml file.
+This will create one server and the number of clients that is configured in the docker-compose.yml file.
 That file can also be used as a reference to deploy a Kubernetes cluster for parallel self-play with 
 high scalability and reliability. 
 
 Using the created GUI, it is possible to visualize the self-play of all these boards in real-time.
-This can be done by settings the ``SELFPLAY\_SHOW\_BOARD'' environment variable in docker-compose.yml to ``true''.
+This can be done by setting the `SELFPLAY\_SHOW\_BOARD' environment variable in docker-compose.yml to `true'.
 For every replica of the client, a new PyGame window will open where the board will change in real-time. 
 
 You can also manually run self-play or create data using puzzles:
@@ -1193,7 +1308,7 @@ To determine whether your new model is better than the previous best, you can us
 It will simulate matches between the two models and record the wins, draws and losses.
 
 In chess, white inherently has a slightly higher chance of winning because they can play the first move \cite{FirstmoveAdvantageChess2022}.
-Therefore, to evaluate two models, each model will both play white and black an equal amount of times.
+Therefore, to evaluate two models, each model will both play white and black an equal number of times.
 
 \begin{minted}{text}
 $ python evaluate.py --help
@@ -1232,9 +1347,10 @@ Optimization is extremely important for chess engines, especially when the engin
 against itself to create a dataset. That is why Python was not an ideal choice to implement this chess engine.
 
 Currently, I'm writing a C++ version of the engine in my spare time \cite{zjefferChessdeeprlcpp2022}. 
-Instead of TensorFlow Keras, I've opted to use PyTorch instead. 
+Instead of TensorFlow Keras, I've opted to use PyTorch instead. I chose this framework because 
+it's a lot faster than Keras, and to expand my experience with AI frameworks.
 So far, I've noticed that the C++ version with PyTorch manages to run the MCTS algorithm 
-four times faster than the Python version: 200 simulations per second instead of 50.
+more than four times faster than the Python version: 200+ simulations per second instead of 50.
 
 
 
@@ -1262,10 +1378,10 @@ researcher at the Reinforcement Learning Group at Leiden University, in The Neth
 With his experience in researching AI and specifically Reinforcement Learning, he was able 
 to give me some insights into how AlphaZero could impact society in industries besides gaming.
 
-I have also asked questions to the following online communities:
+I have also asked these questions to the following online communities:
 
 \begin{itemize}
-    \item The AI Stack Exchange community % TODO: link
+    \item The AI Stack Exchange community \cite{zjefferHowCanAlphaZero2022,zjefferWhatCanWe2022}
     \item The Leela Chess Zero Discord community 
     \item The TalkChess forum, a forum affiliated with The Computer Chess Club (CCC)
 \end{itemize}
@@ -1301,31 +1417,38 @@ slowly became a powerful chess engine on par with the best chess engines in the 
 
 While AlphaZero and its variants have mostly been used in gaming applications, 
 the project is not limited to this. For instance, AlphaGo has been used by Google
-to properly ventilate their data centers more efficiently. The algorithm helped lower
+to properly cool their data centers more efficiently. The algorithm helped lower
 data center cooling costs by 40\% \cite{decemberHasGoogleCracked2020}. 
 It does this by periodically pulling data from many sensors and feeding that data to 
 a deep neural network to predict how different combinations of potential actions
 will affect future energy consumption \cite{HowAIHelps2018}.
 
 Theoretically, this project can be used to solve virtually any problem that can be
-defined as an agent acting upon an environment with discrete state and action spaces \cite{ReinforcementLearning2022a}.
+defined as an agent acting upon an environment with discrete state-action spaces \cite{ReinforcementLearning2022a}, \cite{nbroAnswerAreThere2020}.
 
 Reinforcement learning in general has been used to solve a wide range of problems.
 Many websites that have recommendation systems have already used reinforcement learning 
 to improve which products get recommended to users \cite{nbroAnswerAreThere2020}. 
-For example, Netflix uses contextual bandits to personalize artwork to the user \cite{blogArtworkPersonalizationNetflix2017,surmenokContextualBanditsReinforcement2017}.
+For example, Netflix's homepage is made up of thumbnails of movies and TV shows, which are chosen 
+by contextual bandits in order to maximize click rate \cite{blogArtworkPersonalizationNetflix2017,surmenokContextualBanditsReinforcement2017}.
 This avoids the need for waiting to collect data from users, training a model,
-waiting for an A/B test to conclude, to then finally recommend the best artwork.
+waiting for an A/B test to conclude, to then finally recommend the best thumbnail.
 By then, too many users have ignored an item they would have otherwise clicked on.
 
-% TODO \cite{slaterAnswerAreThere2017}
-
-% TODO: openai five
+Another example in the gaming industry is the use of multiagent reinforcement learning 
+to play as a single team of five agents in the game of DotA 2. DotA 2 is a multiplayer game where 
+two teams fight against each other, so team play is crucial. The goal of the game is to destroy the 
+enemy team's base. This is a very difficult task for an AI to accomplish, as completing this goal often takes 
+around 40 minutes. Simple reward functions are therefore impossible. OpenAI has successfully created 
+an AI that can defeat even the best DotA players in the world with large scale deep reinforcement 
+learning \cite{openaiDotaLargeScale2019,OpenAIFive2019}.
 
 In the field of robotics, (deep) reinforcement learning can be used to teach a robot
 through self-play to perform simple tasks that previously required manual programming.
+Some examples of this are a robot learning how to flip pancakes \cite{petarkormushevRobotLearnsFlip2010}
+and a robot learning how to play table tennis \cite{mpikybrollLearningRobotTable2012}.
 
-\subsection{What are the possible obstacles for companies that wish to implement this?}
+\subsection{Possible obstacles for companies that wish to implement this}
 
 Depending on the application, the amount of data necessary to train a sufficiently powerful model
 can be extremely large. It's necessary for the company to have a good infrastructure to 
@@ -1344,16 +1467,16 @@ but documentation and support is lacking in the C++ versions. This means compani
 who wish to implement this type of application will need to hire C++ developers who
 are also experienced with neural networks.
 
-\subsection{What is the added value for companies?}
+\subsection{The added value for companies}
 
 Options are always useful, and this project offers a way to solve problems 
 using AI without having to manually collect data. The reinforcement learning agent 
 will collect data for you by playing against itself. This means the algorithm will
-get better in a ``fire-and-forget'' manner: just launch a cluster of self-play agents
+get better in a `fire-and-forget' manner: just launch a cluster of self-play agents
 and wait until it gathers enough data. You could create an automatic pipeline to
 retrain the model after a set amount of time or after a certain amount of games.
 
-\subsection{Which alternatives are there?}
+\subsection{Alternatives}
 
 For chess specifically, there are many chess engines that can be used for both analysis
 and playing against. StockFish is the most popular, and as mentioned before, 
@@ -1399,15 +1522,14 @@ this does not mean their results a particularly big step towards AGI.
 Dr. Thomas Moerland had this to say:
 
 \begin{quotation}
-    I think there is a huge gap between the simple games we now solve and the 
+    ``I think there is a huge gap between the simple games we now solve and the 
     'artificial general intelligence' that DeepMind is trying to achieve.
     I believe that the most progress won't come from algorithms, but from calculations.
     For general AI, we need incredibly strong simulators where a huge amount of data
     can be passed through for a very long time. 
     Just like the millions of years of evolution our brains have been through, our brains
-    have been gathering data non-stop throughout our lives. \cite{moerlandEmailExchangeTuur22}
+    have been gathering data non-stop throughout our lives.'' \cite{moerlandEmailExchangeTuur22}
 \end{quotation}
-
 
 
 \subsection{Is there opportunity for further research?}
@@ -1419,13 +1541,10 @@ and more powerful, a lot of research opportunities open up.
 Deep Reinforcement learning for autonomous driving has recently become an active area of research 
 in both academia and industry \cite{DeepReinforcementLearning2022a}.
 
-For this project specifically, there is still a lot of research opportunity to try to solve the problem
-of creating a large enough dataset to train a sufficiently powerful model.
-
-% TODO: expand this section
-
-
-
+For this project specifically, there are still lots of research opportunities to try to solve the problem
+of creating a large enough dataset to train a sufficiently powerful model. To me, the most promising solution is to
+pretrain the model using real data, as there are millions of chess games available on the internet for free.
+However, other avenues should definitely be explored to avoid having to collect that much data in the first place.
 
 %%%%% Advice %%%%%
 \newpage
@@ -1484,19 +1603,37 @@ by only storing the current board state as a FEN string in each node.
 \subsubsection{Programming the MCTS algorithm}
 
 When programming the MCTS algorithm, it is crucial to make every step as efficient as possible.
-In the expansion step of the algorithm, the state of the leaf node should be converted to an object
+In the expansion step of the algorithm, the state of the leaf node needs to be converted to an object
 that can be used as an input in the neural network. The function that converts the leaf's state 
 can be very slow if it's not programmed efficiently. As that function needs to be called for every
 simulation, every line of code should be optimized for speed.
 
+For example, in an early version of my algorithm, this line was used to create an array of zeroes of 
+shape 73x8x8:
+
+\begin{minted}{python}
+arr = np.asarray([0 for _ in range(64*73)]).reshape(73, 8, 8)
+\end{minted}
+
+This was later improved to:
+
+\begin{minted}{python}
+arr = np.zeros(64*73).reshape(73, 8, 8)
+\end{minted}
+
+Running these two lines repeatedly for a thousand times each took 255ms for the first version, and 1ms for the second version.
+This is why it is important to regularly test the speed of the code: sometimes you might write something
+that can be greatly optimized. 
+
+
 Calling the neural network is definitely the slowest step of the algorithm. A good way to take 
 advantage of this is to send batches of data to the network instead of one input at a time. 
-This can be done by creating multiple threads to ``crawl'' through the tree at the same time 
+This can be done by creating multiple threads to `crawl' through the tree at the same time 
 during the selection step of the algorithm. 
 Once every thread has finished by finding a leaf node, every leaf node can be sent to the network at once. 
 For every output received by the neural network, a thread can again be started for the third and fourth steps. 
 This will result in a significant speedup. 
-The difficulty of programming this is mainly making sure the ``crawlers'' during the selection step
+The difficulty of programming this is mainly making sure the `crawlers' during the selection step
 don't all select the same nodes. That would result in a less explored MCTS tree.
 
 \subsubsection{Choosing the right input for the neural network}
@@ -1509,14 +1646,104 @@ You should carefully consider what data the neural network would need to make a 
 based on the problem you're trying to solve. For example: when Google used AlphaGo to make
 their data center's temperature control more efficient, they opted to use the sensors in the
 data center as inputs to the neural network. 
-You should make sure to omit any unnecessary data from the input.
+You should make sure to omit any unnecessary data from the input. Is every input feature important?
+If you need more features, can you apply feature expansion with the inputs you already have?
+
+\subsubsection{Writing tests}
+
+With complex applications like chess engines, it is crucial to write tests to make sure
+every function is working as intended. One small mistake might make it impossible for the 
+neural network to learn from the data, and these bugs might be hard to find.
+
+For instance, I wrote a function that converts the inputs and outputs of the neural network
+to black-and-white images. Every pixel in those images are converted from 0-1 to a grayscale value of 0-255.
+If there are mistakes in your code, viewing these images will help you find them.
+
+\subsubsection{Restricting the search depth}
+
+In this project, a limit was set on the amount of simulations the MCTS algorithm can perform.
+When setting this limit at 400, the depth of the search tree was always around 5. This is quite low,
+but that is because the branching factor of chess is so high. There are simply too many possible actions
+to pick in every state to be able to reach a high depth.  
+
+If the branching factor in your application is lower, this would result in a deeper search tree.
+This might not be necessary for your use-case, so limiting the depth of the search tree might be a good idea
+in order to maximize the speed of the algorithm. Setting a time limit is also a viable strategy 
+to make sure time isn't wasted selecting actions that aren't viable in the first place \cite{masonAnswerHowWe2019}.
+
+\subsubsection{Increasing exploration}
+
+To make sure the algorithm doesn't always pick the same actions, adding more randomness is a good idea. 
+AlphaZero did this by adding Dirichlet noise to the prior probabilities in the root node.
+This ensures that every possible move in the current position is tried at least once. The MCTS search 
+will then overrule the bad moves, but due to the stochastic selection of moves, 
+it will have a small chance to select them anyway \cite{monkPurposeDirichletNoise2018,DirichletDistributionWikipedia}.
+
+\subsection{Step-by-step plan}
+
+This section broadly explains step-by-step how to program similar applications other than chess.
+
+\subsubsection{Step 1: The neural network}
+
+Try to figure out what the input and outputs need to be. The input of the network should contain
+only the information necessary to make an accurate decision. One of the outputs should describe 
+the `value' of the input, while the other should give a win probability for each possible action in the given state.
+
+Depending on the problem, the number of layers could be very high. It is recommended to use residual blocks
+for the hidden layers, because the convolutional filters are suitable for a very wide range of applications, 
+and the skip-connections solve the degradation problem as described in the research section.
+
+\subsubsection{Step 2: The MCTS algorithm}
+
+Now that the neural network is set up, you can use it in the MCTS algorithm.
+Because this is quite a complex algorithm, I recommend you to spend a lot of time brainstorming 
+how to implement it as efficiently as possible. Try to make sure you completely understand the algorithm
+before implementing it.
+
+Start by defining what the nodes and edges in the tree should contain. Object-oriented programming is recommended,
+so create a class for each of these objects. 
+
+Program every step of the MCTS algorithm in its own function, and then try to execute the algorithm on 
+one position.
+
+\subsubsection{Step 3: Self-play}
+
+After the MCTS algorithm can successfully be executed on one position, you can start implementing it 
+in a self-play environment. For chess, many of these environments are already available. For your application,
+it is advisable to write your own environment as efficiently as possible. Visualizing self-play is nice to have,
+but unnecessary, as it can often result in a slower algorithm.
+
+\subsubsection{Step 4: Saving actions}
+
+When self-play works, the next step is to save every action the input makes. This will be your dataset. 
+It consists of the input state of the network, the value that the MCTS algorithm assigned to the root node, 
+and the distribution of actions it selected from the root node.
+
+Here, it's crucial to save the actions in a way that is both easy to read when loading the dataset to train,
+and small enough to save disk space. For chess, I only saved the FEN string of the position, the value, and a dictionary
+of moves and their probabilities.
+
+Execute self-play to create a dataset as large as possible. Depending on your application and your hardware, 
+you might need to do this for multiple days. 
+
+\subsubsection{Step 5: Training the neural network}
+
+Now that your dataset is created, it is time to train the neural network. 
+Start by defining the loss functions for the outputs. I used the cross-entropy loss function for the probabilities,
+and mean squared error for the value output.
+
+Train your model using the dataset that was created with it. Load the data in batches, but make sure to 
+randomly shuffle the data before training. Also don't forget to create graphs of the loss functions during training.
+
+When your model is trained, save it and use it to create a new dataset through self-play. 
+Retrain your model from the new data. Don't reuse data from previous models.
 
 %%%%% Conclusion %%%%%
 \newpage
 \section{Conclusion}
 
 This thesis was created to critically evaluate my research project that tried to 
-answer the question ``How to create a chess engine using deep reinforcement learning''.
+answer the question `How to create a chess engine using deep reinforcement learning'.
 The aim of the project was to create a chess engine based on DeepMind's AlphaZero in
 Python with TensorFlow Keras. This was attempted by programming the MCTS algorithm 
 and a neural network that can train on data collected from self-play. 
@@ -1525,16 +1752,16 @@ beating AlphaZero, but rather to create a simple version of AlphaZero that could
 beat amateur chess players of around 1000 ELO. 
 
 Sadly, the resulting chess engine has not managed to reach this goal.
-This is because of the lack of computational resources necessary to create a big enough
+This is because of a lack of computational resources necessary to create a big enough
 dataset through self-play. However, this thesis does offer some solutions to this problem:
 
 \begin{itemize}
-    \item Pretrain the model on a small dataset
+    \item Pretrain the model on a small dataset with supervised learning
     \item Use docker containers to set up a cluster of self-play agents
 \end{itemize}
 
 This thesis also serves as a warning to people who wish to implement similar algorithms
-without having the necessary access to powerful hardware. It recommends investigating certain 
+without having the necessary access to powerful hardware. It suggests investigating certain 
 alternatives to AlphaZero, such as other reinforcement techniques like Q-learning, SARSA, and DQN,
 but also supervised learning techniques if training data is available.
 
@@ -1555,13 +1782,13 @@ but also supervised learning techniques if training data is available.
 
 \subsubsection{Introduction}
 
-On the 20th of January, I attended a very interesting talk by Matthias Feys, 
+On the 20th of January, I attended a very interesting lecture by Matthias Feys, 
 CTO of ML6. ML6 is an AI consultancy company based in Belgium, Germany, The Netherlands 
-and Switzerland that serves customers across Europe. They have more than 90 
+and Switzerland that serves customers across Europe. They have over ninety 
 machine learning \& data engineering experts and are the largest and fastest 
 growing AI company in Europe. 
 
-The talk was about how the company tries to increase the explainability of their AI 
+He talked about how the company tries to increase the explainability of their AI 
 solutions. 
 
 \subsubsection{What is Explainable AI?}
@@ -1586,7 +1813,7 @@ building trust in the AI.
     \item AI is stronger than human
 \end{enumerate}
 
-\subsubsection{AI is weaker than human}
+\textbf{AI is weaker}
 
 In this scenario, adoption is very difficult, which is why explainability
 will be primarily about improving the AI. By explaining how the AI makes a decision,
@@ -1596,13 +1823,13 @@ You can visualize the outputs of a model. For example: drawing lines and boundin
 boxes around the output of a neural network is a great way to show what the 
 contribution of the model is.
 
-You can improve the model by capturing lots of data, and either letting the customer label
-the data themselves, or by fixing incorrect labels. This is called Active Learning, and it
+You can improve the model by capturing a lot of data and either letting the customer label
+the data themselves or fixing incorrect labels. This is called Active Learning, and it
 focuses on the data where the model is weak. 
 While waiting for a model to improve, you can manually create a simpler model that can
 solve the specific edge case that went wrong before.
 
-\subsubsection{AI is on par with human}
+\textbf{AI is on par}
 
 When the AI is as good as the human counterpart, you want to build trust in the
 AI by discussing how it works. It's difficult to convince someone to consider 
@@ -1613,7 +1840,7 @@ to their advantage. You're basically letting the AI and the human work together
 to solve a problem.
 
 
-\subsubsection{AI is stronger than human}
+\textbf{AI is stronger}
 
 Stronger than human performance is great, but it's better if you can also explain
 why it's the better option. Explainability here is about explaining a complicated
@@ -1676,7 +1903,7 @@ making a decision.
 
 \subsubsection{Conclusion}
 
-The main conclusion of the talk was that explainable AI is not just about using SHAP to explain
+The main conclusion of the talk was that Explainable AI is not just about using SHAP to explain
 the features, but it is about much more than that.
 Explainability is not just part of developing a model, 
 it is present in the whole pipeline from start to finish: it starts with the framing of the problem
@@ -1701,8 +1928,10 @@ be taken to improve the model based on that edge case.
 
 \subsubsection{Sources}
 
-[1] ``Saliency map'' Wikipedia, Oct. 2021. [Online]. Available: https://en.wikipedia.org/w/index.
-php?title=Saliency\_map\&oldid=1049691575 (visited on 04/16/2022)
+[1] `Saliency map' Wikipedia, Oct. 2021. [Online]. 
+
+Available: https://en.wikipedia.org/w/index.
+php?title=Saliency\_map\&oldid=1049691575
 
 \newpage
 \subsection{Installation manual}
@@ -1806,7 +2035,7 @@ You can also use the two docker images in a cluster like Kubernetes, to
 reliably deploy many more servers and clients in parallel.
 
 Using the created GUI, it is possible to visualize the self-play of all these boards in real-time.
-This can be done by settings the ``SELFPLAY\_SHOW\_BOARD'' environment variable in docker-compose.yml to ``true''.
+This can be done by settings the `SELFPLAY\_SHOW\_BOARD''environment variable in docker-compose.yml to `true'.
 For every replica of the client, a new PyGame window will open where the board will change in real-time. 
 
 To manually run self-play or to solve puzzles, you can run the selfplay.py file 
@@ -1835,7 +2064,7 @@ The games will be saved in the './memory' folder.
 
 You can download the puzzles file here: \url{https://database.lichess.org/#puzzles}.
 This is a .csv file consisting of more than 2 million chess puzzles, 
-with many different types (``mateIn1'', ``mateIn2'', ``endgame'', ``short'', etc\dots).
+with many different types (`mateIn1', `mateIn2', `endgame', `short', etc\dots).
 
 Training with these puzzles is faster than training with full games, and the AI can
 more easily learn patterns like mating moves, or other patterns that are difficult to solve. 
@@ -1847,7 +2076,7 @@ python3 selfplay.py --type puzzles \
 \end{minted}
 
 Just like with self-play, you can add -{}-local-predictions if you want to predict locally instead of on a server.
-If the puzzle ends in a checkmate within the move limit, the game will be saved to memory. That is why for now, only puzzles of type ``mateInX'' are supported.
+If the puzzle ends in a checkmate within the move limit, the game will be saved to memory. That is why for now, only puzzles of type `mateInX' are supported.
 The puzzle move limit can be changed in the config.py file.
 
 \subsubsection{Training the AI using a created training set}
@@ -1877,7 +2106,7 @@ python3 evaluate.py --help
 
 The white player in chess inherently has a slightly higher chance of winning,
 because they can play the first move. Therefore, to evaluate two models, 
-each model has to play as white and black an equal amount of games.
+each model has to play as white and black an equal number of games.
 
 Therefore, running $n$ matches means the evaluation will consist of $2\cdot n$ games, because
 each model will play both colors once per match.
