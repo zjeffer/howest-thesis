@@ -10,6 +10,7 @@
 %%%%% Package importing %%%%%
 \usepackage[english]{babel}
 \usepackage[margin=2.5cm]{geometry}
+\usepackage[table]{xcolor}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
@@ -23,9 +24,25 @@
 \usepackage{tcolorbox}
 \usepackage{enumitem}
 \usepackage{changepage}
+\usepackage{afterpage}
+\usepackage{totalcount}
+
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
 
 \usepackage{adjustbox}
 \usepackage{tabularx,ragged2e,booktabs}
+
+\definecolor{lightgray}{gray}{0.9}
+
+\let\oldtabularx\tabularx
+\renewcommand*{\tabularx}{\rowcolors{1}{white}{lightgray}\oldtabularx}
+
 \newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
 
 
@@ -151,6 +168,8 @@ and expertise in programming and AI.
 Furthermore, I'm grateful to my external promotor, Tom Vandecaveye, who has agreed to read and grade
 this thesis as an unbiased party. Mr. Vandecaveye is an employee of dotOcean, where I did my internship.
 
+Additionally, I would like to thank my sister for professionally proofreading this thesis for 
+errors in grammar and spelling.
 Finally, I would like to thank my parents for giving me the chance to have a good education, and 
 the motivation to get the best I can out of my studies.
 
@@ -191,7 +210,7 @@ The thesis contains a reflection on the results of my research project, which pr
 having to create a high number of games through self-play. It also reflects on the impact of this research on society, and the
 viability of this type of artificial intelligence in the future. 
 It follows with advice to people and companies who wish to implement similar algorithms, warning that while this type of 
-algorithm can be applied to solve many problems, the computational power necessary to successfully implement it are very high. 
+algorithm can be applied to solve many problems, the computational power necessary to successfully implement it is very high. 
 
 Finally, the conclusion offers a definitive answer to the research question, based on the previous sections.
 It explains that it is definitely possible to create a chess engine with deep reinforcement learning, as proven by DeepMind,
@@ -222,7 +241,6 @@ but it is almost impossible to do so on consumer hardware.
 \newpage
 \section*{List of abbreviations}
 \addcontentsline{toc}{section}{List of abbreviations}
-
 
 
 \begin{table}[h!]
@@ -266,15 +284,29 @@ but it is almost impossible to do so on consumer hardware.
 \end{table}
 
 % TODO: aanvullen
-% TODO: odd & even row colors
-
 
 %%%%% Glossary %%%%%
 \newpage
 \section*{Glossary}
 \addcontentsline{toc}{section}{Glossary}
 
-% TODO
+\begin{table}[h!]
+    \begin{tabularx}{\textwidth}{@{}LL@{}}
+    \toprule
+    \multicolumn{1}{c}{\textbf{Term}} & \multicolumn{1}{c}{\textbf{Definition}} \\ 
+    \midrule
+    % term & definition \\ \addlinespace
+    Branching factor & The average number of actions that can be made from any state in the environment. \\ \addlinespace
+    Deep reinforcement learning & A type of reinforcement learning that employs a neural network to learn from experience. \\ \addlinespace
+    Deterministic selection & Selecting an action based on the largest value of all state-action pairs. \\ \addlinespace 
+    Elo rating & A rating system for comparing the skill level of players in zero-sum games like chess \cite{EloRatingSystem2022}. \\ \addlinespace
+    Search tree & A tree data structure to represent the future possible states in an environment. \\ \addlinespace
+    Self-play & Deploying an algorithm that plays against a copy of itself, to improve itself or to measure performance. \\ \addlinespace
+    Stochastic selection & Selecting an action based on a probability distribution. \\ \addlinespace
+    \bottomrule
+    \end{tabularx} 
+\end{table}
+
 
 %%%%% Introduction %%%%%
 \newpage
@@ -327,13 +359,16 @@ implementing it in Python on consumer hardware.
 %%%%% Add Howest background %%%%%
 \AddToShipoutPicture{
     \ifnum\value{page}>0
-    \AtPageLowerLeft{
-    \raisebox{3\baselineskip}{\makebox[0.25\paperwidth]{
-        \begin{minipage}{21cm}\centering
-            \includegraphics{img/background.png}
-        \end{minipage}}}
-    }
-  \fi
+        % except last page
+        \ifnum\value{page}<\pagetotal
+            \AtPageLowerLeft{
+            \raisebox{3\baselineskip}{\makebox[0.25\paperwidth]{
+                \begin{minipage}{21cm}\centering
+                    \includegraphics{img/background.png}
+                \end{minipage}}}
+            }
+        \fi
+    \fi
 }
 
 %%%%% Research %%%%%
@@ -405,7 +440,9 @@ The bishop can do the same, but diagonally. The queen is a combination of the ro
 The knight moves in an L-shape: a knight move consists of moving one square vertically, and two horizontally, or vice versa.
 The knight is the only chess piece that can leap over other pieces.
 
-The king can move just like the queen, but only one square at a time.
+The king can move just like the queen, but only one square at a time. 
+The king can also `castle' - a special move that gets the king to safety by moving it two squares towards one 
+of the rooks, and moving the rook to the square that the king has crossed \cite{Castling2022}.
 
 
 \subsubsection{Check and checkmate}
@@ -603,8 +640,8 @@ The algorithm used a combination of the MCTS algorithm and a deep neural network
 
 AlphaGo was built \cite{AlphaGo, MasteringGameGo}  by first training a neural network with supervised learning by using data from human games.
 The weights of that network were then copied to a new reinforcement learning network. That network was used to 
-create a training set through self-play. By playing against itself and with every move recording the current board state, the 
-moves the network considered, and the eventual winner of the game, a training set was created.
+create a training set through self-play. A training set was created by playing against itself and every move 
+recording the current board state, the  moves the network considered, and the eventual winner of the game.
 That training set was then used to train the reinforcement learning network. A separate network (the value network) 
 was used to estimate the value of a position. 
 
@@ -626,8 +663,9 @@ AlphaZero uses a single neural network with two outputs, just like AlphaGo Zero.
 
 \subsubsection{Neural network input}
 
-The input to the network represents the state of the game. 
-It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
+The input to the network represents the current state of the game. 
+
+It has the following shape: $[N , N , (M \cdot T + L)]$:
 
 \begin{itemize}
     \item $N$ is the board size ($N = 8$ in chess)
@@ -653,7 +691,7 @@ It has the following shape: $N \cdot N \cdot (M \cdot T + L)$:
     \end{itemize}
 \end{itemize}
 
-$\Rightarrow 8 \cdot 8 \cdot (12 \cdot 8 + 7)$. 
+$\Rightarrow [8 , 8 , (12 \cdot 8 + 7)]$. 
 
 This means that the input to the neural network is composed of 119 8x8 boards of values.
 The $M$ planes that encode the pieces are repeated $T$ times in the input, resulting in 112 boards.
@@ -1069,7 +1107,7 @@ compared to the move probabilities and the winner from the dataset:
 \end{itemize}
 
 The training pipeline employs two separate loss functions. The policy head uses categorical cross-entropy
-and the value head uses mean squared error.s
+and the value head uses mean squared error.
 
 \subsubsection{The first training session}
 
@@ -1126,7 +1164,7 @@ If the difference in scores between the two players is 5 or greater, the player 
 score was assigned the winner. Games where white has a big advantage at the end of the game are 
 given a score of 0.25, while games where black has a big advantage are given a score of -0.25.
 This fixes the problem of having an unbalanced dataset of mostly draws.
-Without this, the model might overfit, resulting in the value output always being 0.
+Without this improvement, the model might overfit, resulting in the value output always being 0.
 
 Here are some of the loss graphs of subsequent training sessions:
 
@@ -1137,8 +1175,8 @@ Here are some of the loss graphs of subsequent training sessions:
     \caption{Subsequent training sessions.}
 \end{figure}
 
-Different learning rates were tested, but it did not change much, 
-as there is simply a lack of data to train on.
+As is apparent in the graphs, the loss does not decrease much. 
+Different learning rates were tested, but that did not help, as there is simply a lack of data to train on.
 
 
 \subsection{Multiprocessing}
@@ -1173,10 +1211,10 @@ the server creates a ClientHandler in a new thread.
 Here's how one client works:
 
 \begin{enumerate}
-    \item The MCTS algorithm runs 100s of simulations every move. Every simulation sends a chess position to the neural network.
-    \item The agent sends the chess position through a socket.
+    \item The MCTS algorithm runs hundreds of simulations every move. Every MCTS simulation, an input is sent to the network.
+    \item The Agent sends the chess position through a socket.
     \item The ClientHandler receives the chess position and sends it to the server.
-    \item The server calls the network's predict function and returns the outputs to the client handler.
+    \item The Server calls the network's predict function and returns the outputs to the client handler.
     \item The ClientHandler sends the outputs back to the client.
 \end{enumerate}
 
@@ -1201,14 +1239,15 @@ The second system is much less powerful and needed to connect over Wi-Fi, but it
 
 \subsection{A GUI to play against the engine}
 
-The GUI was based on a GitHub project that was created for simply visualizing a chessboard with PyGame \cite{adefokunChessboardAhirajustice2022, pygame}.
+The GUI was based on a GitHub project I found that was created for simply visualizing a chessboard with the PyGame library \cite{adefokunChessboardAhirajustice2022, pygame}.
 I greatly improved and expanded that project to include a way for the player to interact with the board, play against an engine,
 play against yourself, and more \cite{zjefferChessboardZjeffer2022}. I created a pull request to include my changes in the original author's GitHub project,
 but it was declined due to being too extensive and out-of-scope for the project \cite{adefokunChessboard2022pull}.
 
 Using this code, a GUI class was created for playing against the engine. The player can choose a color and play against
 the engine. Clicking on a piece will highlight its square, clicking on another square will move the piece to that square.
-Right-clicking will cancel the move.
+Right-clicking will cancel the move. Not much time was spent on the visual aspects of the GUI, as this was out of scope
+for the research project. 
 
 \begin{figure}[H]
     \centering
@@ -1227,7 +1266,7 @@ to choose the piece to promote to.
 
 \subsection{Docker images}
 
-Because the amount of data needed to train the neural network is very large, two docker images were created:
+Because the amount of data needed to train the neural network is very large, two docker images were created to make deploying and scaling easier:
 
 \begin{itemize}
     \item A server image that runs the neural network and listens for clients.
@@ -1260,7 +1299,7 @@ options:
                         Name of the model (without extension)
 \end{minted}
 
-This will create a new model with the name <NAME> in the folder <FOLDER>.
+This will create a new model with the name <MODEL\_NAME> in the folder <MODEL\_FOLDER>.
 The model parameters (number of hidden layers, input and output shapes if you want to use the network for a different game, the number of convolution filters, etc.)
 can be changed by editing the config.py file.
 
@@ -1346,7 +1385,7 @@ This will start the GUI application to allow you to play against the engine.
 Optimization is extremely important for chess engines, especially when the engine needs to play
 against itself to create a dataset. That is why Python was not an ideal choice to implement this chess engine.
 
-Currently, I'm writing a C++ version of the engine in my spare time \cite{zjefferChessdeeprlcpp2022}. 
+Currently, I'm completely rewriting the engine in C++ in my spare time \cite{zjefferChessdeeprlcpp2022}. 
 Instead of TensorFlow Keras, I've opted to use PyTorch instead. I chose this framework because 
 it's a lot faster than Keras, and to expand my experience with AI frameworks.
 So far, I've noticed that the C++ version with PyTorch manages to run the MCTS algorithm 
@@ -1377,13 +1416,14 @@ To help answer these questions, I have consulted with Dr. Thomas Moerland, a pos
 researcher at the Reinforcement Learning Group at Leiden University, in The Netherlands \cite{ThomasMoerlandPostdoc}. 
 With his experience in researching AI and specifically Reinforcement Learning, he was able 
 to give me some insights into how AlphaZero could impact society in industries besides gaming.
+He is also very familiar with AlphaZero, as he implemented a very simple version of it for single player games \cite{blogSinglePlayerAlphaZeroa}.
 
 I have also asked these questions to the following online communities:
 
 \begin{itemize}
     \item The AI Stack Exchange community \cite{zjefferHowCanAlphaZero2022,zjefferWhatCanWe2022}
-    \item The Leela Chess Zero Discord community 
-    \item The TalkChess forum, a forum affiliated with The Computer Chess Club (CCC)
+    \item The Leela Chess Zero Discord community \cite{discordLC0Discord}
+    \item The TalkChess forum, a forum affiliated with The Computer Chess Club (CCC) \cite{BachelorThesisYour}
 \end{itemize}
 
 \subsection{Strengths and weaknesses}
@@ -1436,7 +1476,7 @@ waiting for an A/B test to conclude, to then finally recommend the best thumbnai
 By then, too many users have ignored an item they would have otherwise clicked on.
 
 Another example in the gaming industry is the use of multiagent reinforcement learning 
-to play as a single team of five agents in the game of DotA 2. DotA 2 is a multiplayer game where 
+to play as a single team of five agents in the game of \textit{DotA 2}. \textit{DotA 2} is a multiplayer videogame where 
 two teams fight against each other, so team play is crucial. The goal of the game is to destroy the 
 enemy team's base. This is a very difficult task for an AI to accomplish, as completing this goal often takes 
 around 40 minutes. Simple reward functions are therefore impossible. OpenAI has successfully created 
@@ -1463,7 +1503,7 @@ to create the same application compared to high-level programming languages like
 This should also be factored into the development process.
 
 AI frameworks like TensorFlow and PyTorch are available in both Python and C++, 
-but documentation and support is lacking in the C++ versions. This means companies 
+but documentation and support is very limited in the C++ versions. This means companies 
 who wish to implement this type of application will need to hire C++ developers who
 are also experienced with neural networks.
 
@@ -1479,7 +1519,7 @@ retrain the model after a set amount of time or after a certain amount of games.
 \subsection{Alternatives}
 
 For chess specifically, there are many chess engines that can be used for both analysis
-and playing against. StockFish is the most popular, and as mentioned before, 
+and to play against. StockFish is the most popular, and as mentioned before, 
 Leela Chess Zero is also open source and works the same way as AlphaZero. 
 
 For industries other than the gaming industry, many problems are solvable by using
@@ -1516,15 +1556,15 @@ This is a slow and extremely difficult process, but DeepMind is confident AlphaZ
 its variants are a big step towards that goal \cite{AlphaZeroSheddingNew}.
 
 Others are more pessimistic about the progress DeepMind has made \cite{moerlandEmailExchangeTuur22, dukezhouAnswerAlphaZeroExample2018},
-explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective games, 
-this does not mean their results a particularly big step towards AGI. 
+explaining that while AlphaGo (Zero) and AlphaZero have certainly been a huge breakthrough in their respective applications, 
+this does not necessarily mean their results are a particularly big step towards AGI. 
 
 Dr. Thomas Moerland had this to say:
 
 \begin{quotation}
     ``I think there is a huge gap between the simple games we now solve and the 
-    'artificial general intelligence' that DeepMind is trying to achieve.
-    I believe that the most progress won't come from algorithms, but from calculations.
+    `artificial general intelligence' that DeepMind is trying to achieve.
+    I believe that most progress won't come from innovations in algorithms, but from innovations in computation.
     For general AI, we need incredibly strong simulators where a huge amount of data
     can be passed through for a very long time. 
     Just like the millions of years of evolution our brains have been through, our brains
@@ -1743,7 +1783,7 @@ Retrain your model from the new data. Don't reuse data from previous models.
 \section{Conclusion}
 
 This thesis was created to critically evaluate my research project that tried to 
-answer the question `How to create a chess engine using deep reinforcement learning'.
+answer the question \textbf{`How to create a chess engine using deep reinforcement learning'}.
 The aim of the project was to create a chess engine based on DeepMind's AlphaZero in
 Python with TensorFlow Keras. This was attempted by programming the MCTS algorithm 
 and a neural network that can train on data collected from self-play. 
@@ -1930,8 +1970,7 @@ be taken to improve the model based on that edge case.
 
 [1] `Saliency map' Wikipedia, Oct. 2021. [Online]. 
 
-Available: https://en.wikipedia.org/w/index.
-php?title=Saliency\_map\&oldid=1049691575
+\hspace{1.5em} Available: \url{https://en.wikipedia.org/w/index.php?title=Saliency\_map\&oldid=1049691575}
 
 \newpage
 \subsection{Installation manual}
@@ -1939,9 +1978,9 @@ php?title=Saliency\_map\&oldid=1049691575
 \subsubsection{System requirements}
 
 \begin{itemize}
-	\item An Nvidia GPU with at least 3GB of VRAM
+	\item An Nvidia GPU with at least 3 GB of VRAM
 	\item A good CPU that can handle the MCTS algorithm
-	\item At least 5GB of free RAM
+	\item At least 5 GB of free RAM
 \end{itemize}
 
 \subsubsection{Python packages (for local/non-dockerized use)}
@@ -2017,7 +2056,7 @@ Copy the model.h5 file to the `models/' folder.
 There are two ways to create a training set:
 
 \begin{itemize}
-	\item Play full chessgames with one model playing white, and a copy of the model playing black.
+	\item Play full chess games with one model playing white, and a copy of the model playing black.
 	\item Solve chess puzzles using the AI model.
 \end{itemize}
 
@@ -2035,7 +2074,7 @@ You can also use the two docker images in a cluster like Kubernetes, to
 reliably deploy many more servers and clients in parallel.
 
 Using the created GUI, it is possible to visualize the self-play of all these boards in real-time.
-This can be done by settings the `SELFPLAY\_SHOW\_BOARD''environment variable in docker-compose.yml to `true'.
+This can be done by settings the `SELFPLAY\_SHOW\_BOARD' environment variable in docker-compose.yml to `true'.
 For every replica of the client, a new PyGame window will open where the board will change in real-time. 
 
 To manually run self-play or to solve puzzles, you can run the selfplay.py file 
@@ -2165,6 +2204,10 @@ python3 main.py [--player <white|black>] \
 
 % TODO: meer bijlages
 
+
+
+% nakaft
+\afterpage{\blankpage}
 
 
 \end{document}

@@ -38,3 +38,13 @@ AI-specialised
 DotA
 non-multiprocessed
 multiprocessed
+Rosenbloom
+NN
+Shapley
+SELFPLAYSHOWBOARD
+Feys
+non-dockerized
+mateInX
+MODELNAME
+MODELFOLDER
+Elo

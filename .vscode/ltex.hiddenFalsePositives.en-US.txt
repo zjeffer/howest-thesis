@@ -25,3 +25,9 @@
 {"rule":"COMMA_COMPOUND_SENTENCE","sentence":"^\\QWhen it's the player's turn but have no legal moves available and they are not checked, the game is drawn.\\E$"}
 {"rule":"ENGLISH_WORD_REPEAT_RULE","sentence":"^\\QNo multiprocessing Multiprocessing (8 games) RTX 3070 + Ryzen 7 5800H 50 simulations/sec 30 simulations/sec per game GTX 1050 + i7 7700HQ 30 simulations/sec 15 simulations/sec per game Comparison of multiprocessing and non-multiprocessing self-play\\E$"}
 {"rule":"ENGLISH_WORD_REPEAT_RULE","sentence":"^\\QNo multiprocessing Multiprocessing (8 games) RTX 3070 + Ryzen 7 5800H 50 simulations/sec 30 simulations/sec per game GTX 1050 + i7 7700HQ 30 simulations/sec 15 simulations/sec per game Comparison of non-multiprocessed and multiprocessed self-play\\E$"}
+{"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QList of abbreviations.\\E$"}
+{"rule":"CD_NN","sentence":"^\\Q8 possible knight moves 9 special `underpromotion' moves: If a pawn is promoted to a queen, it is counted as a queen-like move (see above) If a pawn is promoted to a rook, bishop, or knight, it is seen as an underpromotion (3 pieces) 3 ways to promote: pushing the pawn up to the final rank, or diagonally taking a piece and landing on the final rank \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"LARGE_NUMBER_OF","sentence":"^\\QThis is done by letting the engine play against itself for a large number of matches.\\E$"}
+{"rule":"THANK_FULL","sentence":"^\\QPlay full chessgames with one model playing white, and a copy of the model playing black.\\E$"}
+{"rule":"THANK_FULL","sentence":"^\\QPlay full chess games with one model playing white, and a copy of the model playing black.\\E$"}
+{"rule":"NUMEROUS_DIFFERENT","sentence":"^\\QThis is a .csv file consisting of more than 2 million chess puzzles, with many different types (`mateIn1', `mateIn2', `endgame', `short', etc…).\\E$"}
