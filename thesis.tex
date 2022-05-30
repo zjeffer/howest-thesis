@@ -27,22 +27,18 @@
 \usepackage{afterpage}
 \usepackage{totalcount}
 
-
 \newcommand\blankpage{%
     \null
     \thispagestyle{empty}%
     \addtocounter{page}{-1}%
     \newpage}
 
-
+%%%%% Tables %%%%%
 \usepackage{adjustbox}
 \usepackage{tabularx,ragged2e,booktabs}
-
 \definecolor{lightgray}{gray}{0.9}
-
 \let\oldtabularx\tabularx
 \renewcommand*{\tabularx}{\rowcolors{1}{white}{lightgray}\oldtabularx}
-
 \newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
 
 
@@ -92,7 +88,7 @@
         %%%%% Change the cover image here %%%%%
         \centering
         \includegraphics[width=18.5cm,height=18.5cm]{img/titlepage-cover.png}
-        \caption{Image source: Rosenbloom, Lois {\cite{rosenbloomTopDogAlphaZero2019}}}
+        \caption{Image source: DeepMind {\cite{AlphaZeroSheddingNew}}}
     \end{figure}
     \begin{adjustwidth}{1.5cm}{1.5cm}
 
@@ -1620,8 +1616,6 @@ on a small dataset. This will result in a model that is at least slightly famili
 with the environment. Without a pretrained model, the algorithm will start from nothing
 and make completely random actions. With a pretrained model, the algorithm will have some 
 idea on what decisions to make based on the data it was given in pretraining.
-
-% TODO
 
 \subsection{Tips when programming a similar application}
 
