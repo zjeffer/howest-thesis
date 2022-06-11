@@ -1,3 +1,3 @@
-# LaTeX Template for Howest MCT thesis 
+# How to create a chess engine with deep reinforcement learning
 
-This is a LaTeX template for the bachelor thesis of the MCT course at Howest, Belgium.
+A critical look at DeepMind's AlphaZero
